@@ -25,18 +25,19 @@ LIBS := $(patsubst $(LIB_DIR)/lib%.a,-l %, $(wildcard $(LIB_DIR)/*.a))
 # rules
 .PHONY: all run clean echo
 
-all: $(OBJ_DIR)/main
+all: $(BIN_DIR)/$(ProjectName)
 
 echo:
 	@echo $(LIBS)
 
-$(OBJ_DIR)/main: $(OBJS) # $< not working!
-	@echo bulding main:
-	$(CC) $(CFLAG) $(OBJS) -o $(BIN_DIR)/$(ProjectName) -I $(INC_DIR) -L $(LIB_DIR) $(LIBS)
+# build in debug mode
+$(BIN_DIR)/$(ProjectName): $(OBJS) # $< not working!
+	@echo bulding project:
+	$(CC) $(CFLAG) -g $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS)
 	@echo done!
 
 # static rule
-# genetate .o files in obj_dir
+# genetate .o files in obj_dir from source files
 $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@echo creating object files:
 	$(CC) $(CFLAG) -c $< -I $(INC_DIR) -o $@
