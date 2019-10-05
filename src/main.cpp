@@ -5,8 +5,8 @@ IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
-    Simple *simple = new Simple(wxT("Simple"));
-    simple->Show(true);
+    Window *window = new Window("CIMP");
+    window->Show(true);
 
     return true;
 }

@@ -4,6 +4,6 @@
 #define CIMP_H
 
 #include "CIMP/main.hpp"
-#include "CIMP/simple.hpp"
+#include "CIMP/window.hpp"
 
 #endif // CIMP_H
