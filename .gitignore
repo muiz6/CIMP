@@ -1,0 +1,8 @@
+#ignore following files/folders
+
+#directories
+.VSCodeCounter
+
+#files
+build/*.exe
+*.exe
