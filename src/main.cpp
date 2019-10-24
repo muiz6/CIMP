@@ -1,11 +1,11 @@
 #include "CIMP/cimp.hpp"
 using namespace cp;
 
-IMPLEMENT_APP(MyApp)
+IMPLEMENT_APP(Main)
 
-bool MyApp::OnInit()
+bool Main::OnInit()
 {
-    Window *window = new Window("CIMP");
+    Window *window = new Window(NULL);
     window->Show(true);
 
     return true;
