@@ -1,55 +1,145 @@
+///////////////////////////////////////////////////////////////////////////
+// C++ code generated with wxFormBuilder (version Oct 26 2018)
+// http://www.wxformbuilder.org/
+//
+// PLEASE DO *NOT* EDIT THIS FILE!
+///////////////////////////////////////////////////////////////////////////
+
 #include "CIMP/window.hpp"
 using namespace cp;
 
-Window::Window(const wxString& title, int width, int height)
-: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
+///////////////////////////////////////////////////////////////////////////
+Window::Window( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
-    // set background color of window
-    SetBackgroundColour(wxColour(43, 50, 54));
-    menuInit();
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+	this->SetBackgroundColour( wxColour( 43, 47, 55 ) );
 
-    // Centres the window on screen
+	menuBar = new wxMenuBar( 0 );
+	menuBar->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
+	menuBar->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW ) );
 
-    Centre();
-}
+	menuFile = new wxMenu();
+	wxMenuItem* mItemNew;
+	mItemNew = new wxMenuItem( menuFile, wxID_ANY, wxString( wxT("New") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFile->Append( mItemNew );
 
-void Window::onQuit(wxCommandEvent& WXUNUSED(event))
-{
-    Close(true);
-}
+	wxMenuItem* mItemOpen;
+	mItemOpen = new wxMenuItem( menuFile, wxID_ANY, wxString( wxT("Open") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFile->Append( mItemOpen );
 
-void Window::menuInit()
-{
-    // create menu bar
-    menuBar = new wxMenuBar;
+	wxMenuItem* mItemSave;
+	mItemSave = new wxMenuItem( menuFile, wxID_ANY, wxString( wxT("Save") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFile->Append( mItemSave );
 
-    // create menu
-    file = new wxMenu;
-    filters = new wxMenu;
+	wxMenuItem* mItemSaveAs;
+	mItemSaveAs = new wxMenuItem( menuFile, wxID_ANY, wxString( wxT("Save As") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFile->Append( mItemSaveAs );
 
-    // attach items to menu
-    file->Append(wxID_OPEN, "New");
-    file->Append(wxID_OPEN, "Open");
-    file->Append(wxID_EXIT, "Quit");
+	wxMenuItem* mItemExit;
+	mItemExit = new wxMenuItem( menuFile, wxID_ANY, wxString( wxT("Exit") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFile->Append( mItemExit );
 
-    filters->Append(wxID_OPEN, "Invert");
-    filters->Append(wxID_OPEN, "Grayscale");
-    filters->Append(wxID_OPEN, "Sepia");
-    filters->Append(wxID_OPEN, "Blur");
-    filters->Append(wxID_OPEN, "Sharpen");
+	menuBar->Append( menuFile, wxT("File") );
 
-    // attach menu to menubar
-    menuBar->Append(file, "File");
-    menuBar->Append(filters, "Filters");
+	menuFilters = new wxMenu();
+	wxMenuItem* filterInvert;
+	filterInvert = new wxMenuItem( menuFilters, wxID_ANY, wxString( wxT("Invert Colors") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFilters->Append( filterInvert );
 
-    SetMenuBar(menuBar);
+	wxMenuItem* filterGrey;
+	filterGrey = new wxMenuItem( menuFilters, wxID_ANY, wxString( wxT("Grey Scale") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFilters->Append( filterGrey );
 
-    Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Window::onQuit));
+	wxMenuItem* filterSepia;
+	filterSepia = new wxMenuItem( menuFilters, wxID_ANY, wxString( wxT("Sepia") ) , wxEmptyString, wxITEM_NORMAL );
+	menuFilters->Append( filterSepia );
+
+	menuBar->Append( menuFilters, wxT("Filters") );
+
+	menuImage = new wxMenu();
+	wxMenuItem* imgResize;
+	imgResize = new wxMenuItem( menuImage, wxID_ANY, wxString( wxT("Resize") ) , wxEmptyString, wxITEM_NORMAL );
+	menuImage->Append( imgResize );
+
+	wxMenuItem* imgFlipV;
+	imgFlipV = new wxMenuItem( menuImage, wxID_ANY, wxString( wxT("Flip Vertically") ) , wxEmptyString, wxITEM_NORMAL );
+	menuImage->Append( imgFlipV );
+
+	wxMenuItem* imgFlipH;
+	imgFlipH = new wxMenuItem( menuImage, wxID_ANY, wxString( wxT("Flip Horizontally") ) , wxEmptyString, wxITEM_NORMAL );
+	menuImage->Append( imgFlipH );
+
+	wxMenuItem* imgRotateCW;
+	imgRotateCW = new wxMenuItem( menuImage, wxID_ANY, wxString( wxT("Rotate Clockwise") ) , wxEmptyString, wxITEM_NORMAL );
+	menuImage->Append( imgRotateCW );
+
+	wxMenuItem* imgRotateACW;
+	imgRotateACW = new wxMenuItem( menuImage, wxID_ANY, wxString( wxT("Rotate Anticlockwise") ) , wxEmptyString, wxITEM_NORMAL );
+	menuImage->Append( imgRotateACW );
+
+	menuBar->Append( menuImage, wxT("Image") );
+
+	this->SetMenuBar( menuBar );
+
+	m_toolBar3 = this->CreateToolBar( wxTB_HORIZONTAL, wxID_ANY );
+	m_tool16 = m_toolBar3->AddTool( wxID_ANY, wxT("tool"), wxBitmap( wxT("data/pen.bmp"), wxBITMAP_TYPE_ANY ), wxNullBitmap, wxITEM_NORMAL, wxEmptyString, wxEmptyString, NULL );
+
+	m_colourPicker4 = new wxColourPickerCtrl( m_toolBar3, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE );
+	m_toolBar3->AddControl( m_colourPicker4 );
+	m_toolBar3->Realize();
+
+	wxBoxSizer* boxSizer;
+	boxSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_bitmap3 = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("data/test.bmp"), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxDefaultSize, 0 );
+	boxSizer->Add( m_bitmap3, 0, wxALL, 5 );
+
+
+	this->SetSizer( boxSizer );
+	this->Layout();
+
+	this->Centre( wxBOTH );
 }
 
 Window::~Window()
 {
-    // delete menuBar;
-    // delete file;
-    // delete filters;
+}
+
+SaveDialogue::SaveDialogue( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxSize( -1,-1 ), wxSize( -1,-1 ) );
+
+	wxBoxSizer* boxSizer;
+	boxSizer = new wxBoxSizer( wxVERTICAL );
+
+	textPath = new wxStaticText( this, wxID_ANY, wxT("Path:"), wxDefaultPosition, wxDefaultSize, 0 );
+	textPath->Wrap( -1 );
+	boxSizer->Add( textPath, 0, wxALL, 5 );
+
+	saveDir = new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString, wxT("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	boxSizer->Add( saveDir, 0, wxALL|wxEXPAND, 5 );
+
+	textFormat = new wxStaticText( this, wxID_ANY, wxT("Format:"), wxDefaultPosition, wxDefaultSize, 0 );
+	textFormat->Wrap( -1 );
+	boxSizer->Add( textFormat, 0, wxALL, 5 );
+
+	wxString choiceImgFormatChoices[] = { wxT("BMP 8-bit"), wxT("BMP 24-bit"), wxT("BMP 32-bit") };
+	int choiceImgFormatNChoices = sizeof( choiceImgFormatChoices ) / sizeof( wxString );
+	choiceImgFormat = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, choiceImgFormatNChoices, choiceImgFormatChoices, 0 );
+	choiceImgFormat->SetSelection( 0 );
+	boxSizer->Add( choiceImgFormat, 0, wxALL|wxEXPAND, 5 );
+
+	btnSave = new wxButton( this, wxID_ANY, wxT("Save"), wxDefaultPosition, wxDefaultSize, 0 );
+	boxSizer->Add( btnSave, 0, wxALL, 5 );
+
+
+	this->SetSizer( boxSizer );
+	this->Layout();
+
+	this->Centre( wxBOTH );
+}
+
+SaveDialogue::~SaveDialogue()
+{
 }
