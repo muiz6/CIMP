@@ -46,7 +46,7 @@ $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 # runs output file in external console
 # windows only
 run: all
-	cmd /c start cmd /k "$(BIN_DIR)\$(ProjectName).exe & exit"
+	cmd /c start cmd /k "cd $(BIN_DIR) & $(ProjectName).exe & exit"
 
 # windows only
 clean:

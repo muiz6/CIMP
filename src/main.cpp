@@ -1,12 +1,28 @@
 #include "CIMP/cimp.hpp"
-using namespace cp;
+#include <iostream>
+using namespace std;
 
-IMPLEMENT_APP(Main)
-
-bool Main::OnInit()
+int main()
 {
-    Window *window = new Window(NULL);
-    window->Show(true);
+    cout << "HelloWorld!\n";
+    cin.get();
 
-    return true;
+    cp::Bmp bmp("data\\pen.bmp");
+    bmp.getImg24();
+
+    return 0;
 }
+
+// ********************************************
+// wxWidgets boilerplate code, to be used later
+// ********************************************
+
+// IMPLEMENT_APP(Main)
+
+// bool Main::OnInit()
+// {
+//     Window *window = new Window(NULL);
+//     window->Show(true);
+
+//     return true;
+// }

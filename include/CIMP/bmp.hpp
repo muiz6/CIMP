@@ -1,7 +1,7 @@
 #ifndef BMP_H
 #define BMP_H
 
-// #include <string>
+#include "CIMP/img.hpp"
 #include <cstdint>
 #include <vector>
 
@@ -10,6 +10,7 @@
 
 namespace cp
 {
+    /// @brief class to read/write bitmap images
     class Bmp
     {
     private:
@@ -114,10 +115,10 @@ namespace cp
         /// @return width of bmp image in pixels
         uint32_t getWidth();
 
-        /// @return pointer to array of pixel data in RGB/RGBA sequence
+        /// @return pointer to array of pixel data in 24bit RGB sequence
         uint8_t* getPixelDataInt();
 
-        /// @return pointer to array of pixel data in RGB/RGBA sequence
+        /// @return pointer to array of pixel data in 24bit RGB sequence
         unsigned char* getPixelDataChar();
 
         /// @return size of pixel data in bytes
@@ -127,6 +128,18 @@ namespace cp
         /// @param input: pointer to array of color table data in 32bit
         /// RGBA sequence , size of input must be 1024 bytes
         void setColorTable(uint8_t* input);
+
+        /// @return returns bitmap in the form of 24bit cp::Img object
+        cp::Img getImg24();
+
+        /// @return returns bitmap in the form of 32bit cp::Img object
+        cp::Img getImg32();
+
+        void write8BitBmp();
+
+        void write24BitBmp();
+
+        void write32BitBmp();
     };
 }
 
