@@ -24,15 +24,28 @@ namespace cp
         /// @param height: height of image in pixels
         Img(uint8_t* pixelData, int colorDepth, int width, int height);
 
+        /// copy constructor
+        Img(const Img &);
+
+        /// destructor
         ~Img();
 
         /// @return size of image(pixels) in bytes
         /// same as length
-        unsigned long size();
+        uint32_t size() const;
 
         /// @return color depth of the image in bits
         /// 24 means RGB image, 32 means RGBA image
         int getColorDepth();
+
+        /// @return width of image in pixels
+        int getWidth();
+
+        /// @return height of image in pixels
+        int getHeight();
+
+        /// @return returns pointer to dynamic pixel data array
+        uint8_t* getPixelDataInt();
     };
 }
 

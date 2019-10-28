@@ -67,7 +67,7 @@ namespace cp
 
     public:
 
-        /// @brief Create Bmp from scratch
+        /// @brief Create blank Bmp from scratch
         /// @param width: width of bmp
         /// @param height: height of bmp
         Bmp(int width, int height);
@@ -80,14 +80,21 @@ namespace cp
         /// @param pixelData: pointer to array of pixel data in RGB sequence,
         /// must be thrice the size of product of width and height for 24bit Bmp
         /// i.e arr[width * height * 3]
-        /// @param size: size of the array in bytes
-        Bmp(uint8_t* pixelData, int size, int width, int height);
+        /// @param colorDepth: colorDepth of Image in bits, 24bit for RGB
+        /// and 32bit for RGBA, all other values will be ignored
+        /// @param width: width of bitmap in pixels
+        /// @param height: height of bitmap in pixels
+        Bmp(uint8_t* pixelData, int colorDepth, int width, int height);
 
         /// @brief Create Bmp from vector of pixel data
         /// @param pixelDataInput: vector of pixel data in RGB sequence,
         /// must be thrice the size of product of width and height for 24bit Bmp
         /// i.e vec.size() = width * height * 3
         Bmp(std::vector<unsigned char> &pixelDataInput, int width, int height);
+
+        /// @brief create Bmp from cp::Img object
+        /// @param img: object of cp::Img class
+        Bmp(cp::Img &img);
 
         /// destructor
         ~Bmp();
@@ -96,15 +103,9 @@ namespace cp
         /// @param dpi: desired bit depth of bmp in dots per inch
         void setDotDensity(int dpi);
 
-        /// @brief writes the bmp to file
+        /// @brief writes the bmp to file, let Bmp determine the format
         /// @param path: path of bmp image, do write .bmp extension as well
         void writeToFile(char* path);
-
-        /// @brief set bit depth of bmp - default is 24 bit
-        /// @param b: bit depth of the image allowed values are 8, 24 and
-        /// 32 for 8bit, 24bit and 32bit bitmap respectively
-        /// all other values will be ignored
-        void setBitDepth(int b);
 
         /// @brief must be called when ur done with the Bmp to free memory
         void close();
@@ -124,22 +125,16 @@ namespace cp
         /// @return size of pixel data in bytes
         int size();
 
-        /// @brief set 256 entry color tablefor 8bit bmp
-        /// @param input: pointer to array of color table data in 32bit
-        /// RGBA sequence , size of input must be 1024 bytes
-        void setColorTable(uint8_t* input);
-
         /// @return returns bitmap in the form of 24bit cp::Img object
         cp::Img getImg24();
 
-        /// @return returns bitmap in the form of 32bit cp::Img object
         cp::Img getImg32();
 
-        void write8BitBmp();
+        void write8BitBmp(char* path);
 
-        void write24BitBmp();
+        void write24BitBmp(char* path);
 
-        void write32BitBmp();
+        void write32BitBmp(char* path);
     };
 }
 

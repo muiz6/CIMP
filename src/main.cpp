@@ -5,11 +5,23 @@ using namespace std;
 int main()
 {
     cout << "HelloWorld!\n";
+
+    cp::Bmp bmp("data\\tiger.bmp");
+    uint8_t* pixels = bmp.getPixelDataInt();
+    int width = bmp.getWidth();
+    int height = bmp.getHeight();
+    bmp.close();
+
+    cp::Img img(pixels, 24, width, height);
+
+    cp::Bmp newBmp(img);
+    // cp::Bmp newBmp(pixels, 24, width, height);
+    newBmp.writeToFile("data\\output.bmp");
+    newBmp.close();
+
+    delete[] pixels;
+
     cin.get();
-
-    cp::Bmp bmp("data\\pen.bmp");
-    bmp.getImg24();
-
     return 0;
 }
 
