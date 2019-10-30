@@ -2,7 +2,9 @@
 
 #directories
 .VSCodeCounter
+sample
 
 #files
 build/*.exe
 *.exe
+obj/*.o

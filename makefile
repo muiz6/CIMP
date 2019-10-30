@@ -4,7 +4,8 @@ ProjectName := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 # compiler
 CC = g++
-CFLAG = -std=c++11
+# compile with c++11 standard and in debug mode
+CFLAG = -std=c++11 -g
 
 # path variables
 BIN_DIR = build
@@ -33,7 +34,7 @@ echo:
 # build in debug mode
 $(BIN_DIR)/$(ProjectName): $(OBJS) # $< not working!
 	@echo bulding project:
-	$(CC) $(CFLAG) -g $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS)
+	$(CC) $(CFLAG) $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS)
 	@echo done!
 
 # static rule
@@ -46,7 +47,7 @@ $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 # runs output file in external console
 # windows only
 run: all
-	cmd /c start cmd /k "$(BIN_DIR)\$(ProjectName).exe & exit"
+	cmd /c start cmd /k "cd $(BIN_DIR) & $(ProjectName).exe & exit"
 
 # windows only
 clean:

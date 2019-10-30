@@ -19,5 +19,11 @@
         "isDefault": true
       }
     },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "mingw32-make clean",
+      "problemMatcher": []
+    }
   ]
 }

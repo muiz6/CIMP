@@ -30,7 +30,7 @@ Bmp::Bmp(int width, int height)
     pixelData = new uint8_t[width * height * 3];
 
     // all pixels have value 255 i.e. white image
-    for (int i; i < width * height * 3; i++)
+    for (int i = 0; i < width * height * 3; i++)
     {
         pixelData[i] = 255;
     }
@@ -63,12 +63,12 @@ Bmp::Bmp(char* path)
     bmpInfoHeader.headerSize = 40;
 
     fin.seekg(18, ios::beg);
-    fin.read((char*) temp32, 4);
-    bmpInfoHeader.bmpWidth = *temp32;
+    fin.read((char*) stemp32, 4);
+    bmpInfoHeader.bmpWidth = *stemp32;
 
     fin.seekg(22, ios::beg);
-    fin.read((char*) temp32, 4);
-    bmpInfoHeader.bmpHeight = *temp32;
+    fin.read((char*) stemp32, 4);
+    bmpInfoHeader.bmpHeight = *stemp32;
 
     bmpInfoHeader.colorPlaneCount = 1;
 
@@ -85,18 +85,20 @@ Bmp::Bmp(char* path)
     bmpInfoHeader.imageSize = *temp32;
 
     fin.seekg(38, ios::beg);
-    fin.read((char*) stemp32, 4);
-    bmpInfoHeader.horizontalResolution = *stemp32;
+    fin.read((char*) temp32, 4);
+    bmpInfoHeader.horizontalResolution = *temp32;
 
     fin.seekg(42, ios::beg);
-    fin.read((char*) stemp32, 4);
-    bmpInfoHeader.verticalResolution = *stemp32;
+    fin.read((char*) temp32, 4);
+    bmpInfoHeader.verticalResolution = *temp32;
 
     fin.seekg(46, ios::beg);
     fin.read((char*) temp32, 4);
     bmpInfoHeader.colorCount = *temp32;
 
-    bmpInfoHeader.impColorCount = 0;
+    fin.seekg(50, ios::beg);
+    fin.read((char*) temp32, 4);
+    bmpInfoHeader.impColorCount = *temp32;
 
     delete temp32;
     delete stemp32;
@@ -125,6 +127,20 @@ Bmp::Bmp(char* path)
             size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 4;
         }
     }
+
+    // to read color table for 8bit bmp
+    if (bmpInfoHeader.colorDepth == 8)
+    {
+        uint32_t colCount;
+        fin.seekg(46);
+        fin.read((char*) &colCount, 4);
+        unsigned int colTableSize = colCount * 4;
+        fin.seekg(54);
+        colorTable = new uint8_t[colTableSize];
+        fin.read((char*) colorTable, colTableSize);
+    }
+
+    // to read pixel data
 
     // deleted in destructor
     pixelData = new uint8_t[size];
@@ -166,6 +182,19 @@ Bmp::Bmp(char* path)
             }
         }
     }
+    else if (bmpInfoHeader.colorDepth == 8)
+    {
+        for (int i = 0; i < width; ++i)
+        {
+            for (int j = 0; j < height; ++j)
+            {
+                for (int k = 0; k < 1; ++k)
+                {
+                    flip[(i + j * width) * 1 + k] = bgr[(i + (height - 1 - j) * width) * 1 + k];
+                }
+            }
+        }
+    }
 
     // bgr to rgb
     if (bmpInfoHeader.colorDepth == 24)
@@ -187,18 +216,32 @@ Bmp::Bmp(char* path)
             pixelData[i + 3] = flip[i + 3];
         }
     }
+    else if (bmpInfoHeader.colorDepth == 8)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            pixelData[i] = flip[i];
+        }
+    }
 
     delete[] bgr;
     delete[] flip;
     fin.close();
 }
 
-Bmp::Bmp(uint8_t* pixelDataInput, int size, int width, int height)
+Bmp::Bmp(uint8_t* pixelDataInput, int colorDepth, int width, int height)
 {
     // initializing bmpHeader
     bmpHeader.fileType[0] = 'B';
     bmpHeader.fileType[1] = 'M';
-    bmpHeader.fileSize = size + 54;
+    if (colorDepth == 24)
+    {
+        bmpHeader.fileSize = width * height * 3 + 54;
+    }
+    else if (colorDepth == 32)
+    {
+        bmpHeader.fileSize = width * height * 3 + 54;
+    }
     bmpHeader.reserved = 0;
     bmpHeader.pixelDataOffset = 54;
 
@@ -207,7 +250,7 @@ Bmp::Bmp(uint8_t* pixelDataInput, int size, int width, int height)
     bmpInfoHeader.bmpWidth = width;
     bmpInfoHeader.bmpHeight = height;
     bmpInfoHeader.colorPlaneCount = 1;
-    bmpInfoHeader.colorDepth = 24;
+    bmpInfoHeader.colorDepth = colorDepth;
     bmpInfoHeader.compressionMethod = 0;
     bmpInfoHeader.imageSize = bmpHeader.fileSize;
     bmpInfoHeader.horizontalResolution = 3780;
@@ -215,7 +258,16 @@ Bmp::Bmp(uint8_t* pixelDataInput, int size, int width, int height)
     bmpInfoHeader.colorCount = 0;
     bmpInfoHeader.impColorCount = 0;
 
-    pixelData = new uint8_t[size];
+    if (colorDepth == 24)
+    {
+        uint32_t size = width * height * 3;
+        pixelData = new uint8_t[size];
+    }
+    else if (colorDepth == 32)
+    {
+        uint32_t size = width * height * 4;
+        pixelData = new uint8_t[size];
+    }
 
     for (int i = 0; i < bmpHeader.fileSize - 54; i++)
     {
@@ -253,10 +305,63 @@ Bmp::Bmp(std::vector<unsigned char> &pixelDataInput, int width, int height)
     }
 }
 
+Bmp::Bmp(Img &img)
+{
+    // initializing bmpHeader
+    bmpHeader.fileType[0] = 'B';
+    bmpHeader.fileType[1] = 'M';
+    bmpHeader.fileSize = img.size() + 54;
+    bmpHeader.reserved = 0;
+    bmpHeader.pixelDataOffset = 54;
+
+    // initializing bmpInfoHeader
+    bmpInfoHeader.headerSize = 40;
+    bmpInfoHeader.bmpWidth = img.getWidth();
+    bmpInfoHeader.bmpHeight = img.getHeight();
+    bmpInfoHeader.colorPlaneCount = 1;
+    bmpInfoHeader.colorDepth = 24;
+    bmpInfoHeader.compressionMethod = 0;
+    bmpInfoHeader.imageSize = bmpHeader.fileSize;
+    bmpInfoHeader.horizontalResolution = 3780;
+    bmpInfoHeader.verticalResolution = 3780;
+    bmpInfoHeader.colorCount = 0;
+    bmpInfoHeader.impColorCount = 0;
+
+    uint8_t* pixelDataInput = img.getPixelDataInt();
+
+    pixelData = new uint8_t[img.size()];
+    for (int i = 0; i < img.size(); i++)
+    {
+        pixelData[i] = pixelDataInput[i];
+    }
+
+    delete[] pixelDataInput;
+}
+
 Bmp::~Bmp() {}
 
 void Bmp::close()
 {
+    // erasing bmpHeader
+    bmpHeader.fileType[0] = NULL;
+    bmpHeader.fileType[1] = NULL;
+    bmpHeader.fileSize = NULL;
+    bmpHeader.reserved = NULL;
+    bmpHeader.pixelDataOffset = NULL;
+
+    // erasing bmpInfoHeader
+    bmpInfoHeader.headerSize = NULL;
+    bmpInfoHeader.bmpWidth = NULL;
+    bmpInfoHeader.bmpHeight = NULL;
+    bmpInfoHeader.colorPlaneCount = NULL;
+    bmpInfoHeader.colorDepth = NULL;
+    bmpInfoHeader.compressionMethod = NULL;
+    bmpInfoHeader.imageSize = NULL;
+    bmpInfoHeader.horizontalResolution = NULL;
+    bmpInfoHeader.verticalResolution = NULL;
+    bmpInfoHeader.colorCount = NULL;
+    bmpInfoHeader.impColorCount = NULL;
+
     delete[] pixelData;
 
     // only delete color table if any memory is assigned to it
@@ -269,10 +374,12 @@ void Bmp::close()
 void Bmp::writeToFile(char* path)
 {
     std::ofstream fout(path, std::ios::binary);
+
+    // write bmpHeader and bmpInfoHeader
     fout.write((char*) &bmpHeader, sizeof(bmpHeader));
     fout.write((char*) &bmpInfoHeader, sizeof(bmpInfoHeader));
 
-    // write color table to file only if bit depth is 8bit
+    // write color table to file only if color depth is 8bit
     if (bmpInfoHeader.colorDepth == 8)
     {
         fout.write((char*) colorTable, 1024);
@@ -283,6 +390,10 @@ void Bmp::writeToFile(char* path)
     // rgb to bgr
     uint8_t* flip;
     uint8_t* bgr;
+    uint32_t size;
+    int width = bmpInfoHeader.bmpWidth;
+    int height = bmpInfoHeader.bmpHeight;
+
     if (bmpInfoHeader.colorDepth == 8)
     {
         int width = bmpInfoHeader.bmpWidth;
@@ -290,17 +401,34 @@ void Bmp::writeToFile(char* path)
         flip = new uint8_t[width * height];
         bgr = new uint8_t[width * height];
     }
-    else
+    else if (bmpInfoHeader.colorDepth == 24)
     {
-        flip = new uint8_t[bmpHeader.fileSize - 54];
-        bgr = new uint8_t[bmpHeader.fileSize - 54];
+        size = width * height * 3;
+        flip = new uint8_t[size];
+        bgr = new uint8_t[size];
+    }
+    else if (bmpInfoHeader.colorDepth == 32)
+    {
+        size = width * height * 4;
+        flip = new uint8_t[size];
+        bgr = new uint8_t[size];
     }
 
-    int width = bmpInfoHeader.bmpWidth;
-    int height = bmpInfoHeader.bmpHeight;
-
     // vertical flip
-    if (bmpInfoHeader.colorDepth == 24)
+    if (bmpInfoHeader.colorDepth == 8)
+    {
+        for (int i = 0; i < width; ++i)
+        {
+            for (int j = 0; j < height; ++j)
+            {
+                for (int k = 0; k < 1; ++k)
+                {
+                    flip[(i + j * width) * 1 + k] = pixelData[(i + (height - 1 - j) * width) * 1 + k];
+                }
+            }
+        }
+    }
+    else if (bmpInfoHeader.colorDepth == 24)
     {
         for (int i = 0; i < width; ++i)
         {
@@ -326,22 +454,16 @@ void Bmp::writeToFile(char* path)
             }
         }
     }
-    else if (bmpInfoHeader.colorDepth == 8)
-    {
-        for (int i = 0; i < width; ++i)
-        {
-            for (int j = 0; j < height; ++j)
-            {
-                for (int k = 0; k < 1; ++k)
-                {
-                    flip[(i + j * width) * 1 + k] = pixelData[(i + (height - 1 - j) * width) * 1 + k];
-                }
-            }
-        }
-    }
 
     // rgb to bgr
-    if (bmpInfoHeader.colorDepth == 24)
+    if (bmpInfoHeader.colorDepth == 8)
+    {
+        for (int i = 0; i < width* height; i++)
+        {
+            bgr[i] = flip[i];
+        }
+    }
+    else if (bmpInfoHeader.colorDepth == 24)
     {
         for (int i = 0; i < bmpHeader.fileSize - 54; i += 3)
         {
@@ -360,13 +482,6 @@ void Bmp::writeToFile(char* path)
             bgr[i + 3] = flip[i + 3];
         }
     }
-    else if (bmpInfoHeader.colorDepth == 8)
-    {
-        for (int i = 0; i < width* height; i++)
-        {
-            bgr[i] = flip[i];
-        }
-    }
 
     fout.write((char*) bgr, bmpHeader.fileSize - 54);
     fout.close();
@@ -383,32 +498,6 @@ void Bmp::setDotDensity(int dpi)
     bmpInfoHeader.verticalResolution = ppm;
 }
 
-void Bmp::setBitDepth(int b)
-{
-    if (b == 24)
-    {
-        bmpHeader.fileSize = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 3 + 54;
-        bmpInfoHeader.colorDepth = b;
-        bmpInfoHeader.imageSize = bmpHeader.fileSize;
-    }
-    else if (b == 32)
-    {
-        bmpHeader.fileSize = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 4 + 54;
-        bmpInfoHeader.colorDepth = b;
-        bmpInfoHeader.imageSize = bmpHeader.fileSize;
-    }
-    else if (b == 8)
-    {
-        // 1024 is size of full 256 entry colortable;
-        bmpHeader.fileSize = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight + 1024 + 54;
-        bmpInfoHeader.colorDepth = b;
-        bmpInfoHeader.imageSize = bmpHeader.fileSize;
-        bmpHeader.pixelDataOffset = 54 + 1024;
-        bmpInfoHeader.colorCount = 256;
-        bmpInfoHeader.impColorCount = 256;
-    }
-}
-
 uint32_t Bmp::getHeight()
 {
     return bmpInfoHeader.bmpHeight;
@@ -421,22 +510,89 @@ uint32_t Bmp::getWidth()
 
 uint8_t* Bmp::getPixelDataInt()
 {
-    uint8_t* result = new uint8_t[bmpHeader.fileSize - 54];
-    for (int i = 0; i < bmpHeader.fileSize - 54; i++)
+    // converting 8bit to 24bit rgb
+    if (bmpInfoHeader.colorDepth == 8)
     {
-        result[i] = pixelData[i];
+        uint32_t size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 3;
+        uint8_t* result = new uint8_t[size];
+        for (int i = 0; i < bmpHeader.fileSize - 1024 - 54; i++)
+        {
+            int j = 3 * i;
+            int k = 4 * i;
+            result[j] = colorTable[k];
+            result[j + 1] = colorTable[k + 1];
+            result[j + 2] = colorTable[k + 2];
+            // alpha value colorTable[k + 3] is skipped
+        }
+
+        // converting bgr to rgb
+        for (int i = 0; i < size; i += 3)
+        {
+            uint8_t temp = result[i];
+            result[i] = result[i + 2];
+            // result[i + 1] is ignored
+            result[i + 2] = temp;
+        }
+        return result;
     }
-    return result;
+    else if (bmpInfoHeader.colorDepth == 24)
+    {
+        uint32_t size = bmpHeader.fileSize - 54;
+        uint8_t* result = new uint8_t[size];
+        for (int i = 0; i < bmpHeader.fileSize - 54; i++)
+        {
+            result[i] = pixelData[i];
+        }
+        return result;
+    }
+    else if (bmpInfoHeader.colorDepth == 32)
+    {
+        uint32_t size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 3;
+        uint8_t* result = new uint8_t[size];
+
+        int i = 0;
+        int j = 0;
+        while (i < size)
+        {
+            result[j] = pixelData[i];
+            result[j + 1] = pixelData[i + 1];
+            result[j + 2] = pixelData[i + 2];
+            // alpha value: pixelData[i + 3] is skipped
+
+            i += 4;
+            j += 3;
+        }
+        return result;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 unsigned char* Bmp::getPixelDataChar()
 {
-    unsigned char* result = new unsigned char[bmpHeader.fileSize - 54];
-    for (int i = 0; i < bmpHeader.fileSize - 54; i++)
+    if (bmpInfoHeader.colorDepth == 24)
     {
-        result[i] = pixelData[i];
+        unsigned char* result = new unsigned char[bmpHeader.fileSize - 54];
+        for (int i = 0; i < bmpHeader.fileSize - 54; i++)
+        {
+            result[i] = pixelData[i];
+        }
+        return result;
     }
-    return result;
+    else if (bmpInfoHeader.colorDepth == 32)
+    {
+        uint32_t size;
+    }
+    else if (bmpInfoHeader.colorDepth == 8)
+    {
+
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 int Bmp::size()
@@ -444,11 +600,96 @@ int Bmp::size()
     return bmpHeader.fileSize - 54;
 }
 
-void Bmp::setColorTable(uint8_t* input)
+cp::Img Bmp::getImg24()
 {
-    colorTable = new uint8_t[1024];
-    for (int i = 0; i < 1024; i++)
+    // uint32_t size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 3;
+    // uint8_t* pixelDataInput = new uint8_t[size];
+    // for (int i=0;i<size;i++)
+    // {
+    //     pixelDataInput[i] = pixelData[i];
+    // }
+
+    // converting 8bit to 24bit rgb
+    uint8_t* pixelDataInput = NULL;
+    if (bmpInfoHeader.colorDepth == 8)
     {
-        colorTable[i] = input[i];
+        uint32_t size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 3;
+        pixelDataInput = new uint8_t[size];
+        for (int i = 0; i < bmpHeader.fileSize - 1024 - 54; i++)
+        {
+            int j = 3 * i;
+            int k = 4 * i;
+            pixelDataInput[j] = colorTable[k];
+            pixelDataInput[j + 1] = colorTable[k + 1];
+            pixelDataInput[j + 2] = colorTable[k + 2];
+            // alpha value colorTable[k + 3] is skipped
+        }
+
+        // converting bgr to rgb
+        for (int i = 0; i < size; i += 3)
+        {
+            uint8_t temp = pixelDataInput[i];
+            pixelDataInput[i] = pixelDataInput[i + 2];
+            // pixelData[i + 1] is ignored
+            pixelDataInput[i + 2] = temp;
+        }
+    }
+    else if (bmpInfoHeader.colorDepth == 24)
+    {
+        uint32_t size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 3;
+        pixelDataInput = new uint8_t[size];
+        for (int i = 0; i < size; i++)
+        {
+            pixelDataInput[i] = pixelData[i];
+        }
+    }
+    else if (bmpInfoHeader.colorDepth == 32)
+    {
+        uint32_t size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 4;
+        pixelDataInput = new uint8_t[size];
+
+        int i = 0;
+        int j = 0;
+        while (i < size)
+        {
+            pixelDataInput[j] = pixelData[i];
+            pixelDataInput[j + 1] = pixelData[i + 1];
+            pixelDataInput[j + 2] = pixelData[i + 2];
+            // alpha value: pixelData[i + 3] is skipped
+
+            i += 4;
+            j += 3;
+        }
+    }
+
+    int imgWidth = bmpInfoHeader.bmpWidth;
+    int imgHeight = bmpInfoHeader.bmpHeight;
+
+    Img img(pixelDataInput, 24, imgWidth, imgHeight);
+
+    delete[] pixelDataInput;
+
+    return img;
+}
+
+Img Bmp::getImg32() {}
+
+void Bmp::write8BitBmp(char* path) {}
+
+void Bmp::write24BitBmp(char* path)
+{
+    if (bmpInfoHeader.colorDepth == 8)
+    {
+
+    }
+    else if (bmpInfoHeader.colorDepth == 24)
+    {
+
+    }
+    else if (bmpInfoHeader.colorDepth == 32)
+    {
+
     }
 }
+
+void Bmp::write32BitBmp(char* path) {}

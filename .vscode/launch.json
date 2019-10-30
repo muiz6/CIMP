@@ -8,7 +8,7 @@
       "program": "${workspaceRoot}\\build\\${workspaceFolderBasename}.exe",
       "args": [],
       "stopAtEntry": false,
-      "cwd": "${workspaceFolder}/build",
+      "cwd": "${workspaceFolder}\\build",
       "environment": [],
       "externalConsole": true, //set to true to see output in cmd instead
       "MIMode": "gdb",
@@ -26,14 +26,14 @@
       "name": "gdb run and debug project",
       "type": "cppdbg",
       "request": "launch",
-      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "program": "${workspaceRoot}\\build\\${workspaceFolderBasename}.exe",
       "args": [],
       "stopAtEntry": false,
-      "cwd": "${workspaceFolder}/build",
+      "cwd": "${workspaceFolder}\\build",
       "environment": [],
-      "externalConsole": false, //set to true to see output in cmd instead
+      "externalConsole": true, //set to true to see output in cmd instead
       "MIMode": "gdb",
-      "miDebuggerPath": "C:\\MinGW64\\bin\\gdb.exe",
+      "miDebuggerPath": "C:\\Program Files\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin\\gdb.exe",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
