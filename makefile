@@ -4,7 +4,7 @@ ProjectName := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
 # compiler
 CC = g++
-CFLAG = -std=c++11
+CFLAG = -std=c++11 -g
 
 # path variables
 BIN_DIR = build
@@ -33,7 +33,7 @@ echo:
 # build in debug mode
 $(BIN_DIR)/$(ProjectName): $(OBJS) # $< not working!
 	@echo bulding project:
-	$(CC) $(CFLAG) -g $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS)
+	$(CC) $(CFLAG) $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS)
 	@echo done!
 
 # static rule

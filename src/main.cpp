@@ -2,24 +2,32 @@
 #include <iostream>
 using namespace std;
 
-int main()
+int main(int argc, char** argv)
 {
     cout << "HelloWorld!\n";
 
-    cp::Bmp bmp("data\\tiger.bmp");
-    uint8_t* pixels = bmp.getPixelDataInt();
-    int width = bmp.getWidth();
-    int height = bmp.getHeight();
-    bmp.close();
-
-    cp::Img img(pixels, 24, width, height);
+    cp::Bmp bmp("..\\sample\\bmp-24bit-2.bmp");
+    cp::Img img = bmp.getImg24();
 
     cp::Bmp newBmp(img);
-    // cp::Bmp newBmp(pixels, 24, width, height);
     newBmp.writeToFile("data\\output.bmp");
     newBmp.close();
+    bmp.close();
 
-    delete[] pixels;
+    // cp::Bmp bmp("..\\sample\\bmp-24bit-2.bmp");
+    // uint8_t* pixels = bmp.getPixelDataInt();
+    // int width = bmp.getWidth();
+    // int height = bmp.getHeight();
+    // bmp.close();
+
+    // cp::Img img(pixels, 24, width, height);
+    // cp::Img imgCpy = img;
+
+    // cp::Bmp newBmp(imgCpy);
+    // newBmp.writeToFile("data\\output.bmp");
+    // newBmp.close();
+
+    // delete[] pixels;
 
     cin.get();
     return 0;

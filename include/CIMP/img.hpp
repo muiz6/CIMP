@@ -12,17 +12,17 @@ namespace cp
         unsigned int height;
         unsigned int width;
         int colorDepth;
-        uint8_t* pixelData = NULL;
+        uint8_t* pixelData;
 
     public:
 
-        /// @param pixelData: pointer to array of pixels
+        /// @param pixelDataInput: pointer to dynamic array of pixels
         /// @param colorDepth: color depth of image, allowed values are 24
         /// and 32 for 24bit and 32bit respectively. All other values will
         /// be ignored
         /// @param width: width of image in pixels
         /// @param height: height of image in pixels
-        Img(uint8_t* pixelData, int colorDepth, int width, int height);
+        Img(uint8_t* pixelDataInput, int colorDepth, int width, int height);
 
         /// copy constructor
         Img(const Img &);

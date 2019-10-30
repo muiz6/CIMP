@@ -2,27 +2,40 @@
 #include <iostream>
 using namespace cp;
 
-Img::Img(uint8_t* pixelData, int colorDepth, int width, int height)
+Img::Img(uint8_t* pixelDataInput, int colorDepthInput, int width, int height)
 {
-    this->pixelData = pixelData;
-    if (colorDepth == 24)
+    // pixelData = pixelDataInput;
+    uint32_t size;
+    if (colorDepthInput == 24)
     {
-        this->colorDepth = colorDepth;
+        colorDepth = colorDepthInput;
+        size = width * height * 3;
     }
-    else if (colorDepth == 32)
+    else if (colorDepthInput == 32)
     {
-        this->colorDepth = 32;
+        colorDepth = colorDepthInput;
+        size = width * height * 4;
     }
-    else
-    {
-        this->colorDepth = NULL;
-    }
+    // else
+    // {
+    //     this->colorDepth = NULL;
+    // }
+    std::cout << size << std::endl;
     this->width = width;
     this->height = height;
+    // std::cout << "Test\n";
+
+    pixelData = new uint8_t[size];
+    for (uint32_t i = 0; i < size; i++)
+    {
+        pixelData[i] = pixelDataInput[i];
+        // std::cout << i << std::endl;
+    }
 }
 
 Img::Img(const Img &obj)
 {
+    std::cout << "copy ctor called\n";
     width = obj.width;
     height = obj.height;
     colorDepth = obj.colorDepth;
@@ -36,10 +49,7 @@ Img::Img(const Img &obj)
 
 Img::~Img()
 {
-    if (pixelData != NULL)
-    {
-        delete[] pixelData;
-    }
+    // delete[] pixelData;
 }
 
 uint32_t Img::size() const
