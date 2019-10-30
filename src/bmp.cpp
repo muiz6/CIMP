@@ -637,7 +637,7 @@ cp::Img Bmp::getImg24()
     else if (bmpInfoHeader.colorDepth == 24)
     {
         uint32_t size = bmpInfoHeader.bmpWidth * bmpInfoHeader.bmpHeight * 3;
-        uint8_t* pixelDataInput = new uint8_t[size];
+        pixelDataInput = new uint8_t[size];
         for (int i = 0; i < size; i++)
         {
             pixelDataInput[i] = pixelData[i];
@@ -665,9 +665,7 @@ cp::Img Bmp::getImg24()
     int imgWidth = bmpInfoHeader.bmpWidth;
     int imgHeight = bmpInfoHeader.bmpHeight;
 
-    std::cout << bmpHeader.fileSize - 54<<std::endl;
     Img img(pixelDataInput, 24, imgWidth, imgHeight);
-    // Img img = new Img(pixelDataInput, 24, imgWidth, imgHeight);
 
     delete[] pixelDataInput;
 
