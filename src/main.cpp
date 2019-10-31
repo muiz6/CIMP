@@ -9,7 +9,11 @@ int main(int argc, char** argv)
     cp::Bmp bmp("..\\sample\\bmp-24bit-2.bmp");
     cp::Img img = bmp.getImg24();
 
-    cp::Bmp newBmp(img);
+    cp::Filters fltr(img);
+    fltr.alienate();
+    cp::Img newImg = fltr.getImg24();
+
+    cp::Bmp newBmp(newImg);
     newBmp.writeToFile("data\\output.bmp");
     newBmp.close();
     bmp.close();

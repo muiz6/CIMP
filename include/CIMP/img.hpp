@@ -12,6 +12,8 @@ namespace cp
         unsigned int height;
         unsigned int width;
         int colorDepth;
+
+    protected:
         uint8_t* pixelData;
 
     public:
@@ -28,7 +30,7 @@ namespace cp
         Img(const Img &);
 
         /// destructor
-        ~Img();
+        virtual ~Img();
 
         /// @return size of image(pixels) in bytes
         /// same as length
@@ -46,6 +48,12 @@ namespace cp
 
         /// @return returns pointer to dynamic pixel data array
         uint8_t* getPixelDataInt();
+
+        /// @return cp::img object 24bit i.e. RGB
+        virtual cp::Img getImg24();
+
+        /// @return cp::Img object of 32bit i.e. RGBA
+        virtual cp::Img getImg32();
     };
 }
 
