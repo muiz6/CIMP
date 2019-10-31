@@ -103,3 +103,62 @@ uint8_t* Img::getPixelDataInt()
     }
     return result;
 }
+
+Img Img::getImg24()
+{
+    // uint8_t* pixelDataInput = NULL;
+    // if (colorDepth == 24)
+    // {
+    //     uint32_t size = width * height * 3;
+    //     pixelDataInput = new uint8_t[size];
+    // }
+    // else if (colorDepth == 32)
+    // {
+    //     uint32_t size = width * height * 4;
+    //     pixelDataInput = new uint8_t[size];
+    // }
+    // delete[] pixelDataInput;
+
+    if (colorDepth == 24)
+    {
+        Img img(pixelData, 24, width, height);
+        return img;
+    }
+    else if (colorDepth == 32)
+    {
+        uint32_t size = width * height * 3;
+        uint8_t* pixelDataInput = new uint8_t[size];
+        for (int i = 0, j = 0; j < size; i += 3, j += 4)
+        {
+            pixelDataInput[i] = pixelData[j];
+            pixelDataInput[i + 1] = pixelData[j + 1];
+            pixelDataInput[i + 2] = pixelData[j + 2];
+            // pixelData[j + 3] is skipped
+        }
+        Img img(pixelDataInput, 24, width, height);
+        return img;
+    }
+}
+
+Img Img::getImg32()
+{
+    if (colorDepth == 24)
+    {
+        uint32_t size = width * height * 4;
+        uint8_t* pixelDataInput = new uint8_t[size];
+        for (int i = 0, j = 0; j < size; i += 3, j += 4)
+        {
+            pixelDataInput[j] = pixelData[i];
+            pixelDataInput[j + 1] = pixelData[i + 1];
+            pixelDataInput[j + 2] = pixelData[i + 2];
+            pixelDataInput[j + 3] = 255;
+        }
+        Img img(pixelDataInput, 32, width, height);
+        return img;
+    }
+    else if (colorDepth == 32)
+    {
+        Img img(pixelData, 32, width, height);
+        return img;
+    }
+}
