@@ -9,15 +9,19 @@ namespace cp
     class Img
     {
     private:
-        unsigned int height;
-        unsigned int width;
-        int colorDepth;
 
     protected:
-        uint8_t* pixelData;
+        unsigned int width;
+        unsigned int height;
+        int colorDepth;
+        uint8_t* pixelData = NULL;
+
+        /// @brief does nothing
+        Img();
 
     public:
 
+        /// @brief initialize cp::Img with array of pixel data
         /// @param pixelDataInput: pointer to dynamic array of pixels
         /// @param colorDepth: color depth of image, allowed values are 24
         /// and 32 for 24bit and 32bit respectively. All other values will
@@ -54,6 +58,10 @@ namespace cp
 
         /// @return cp::Img object of 32bit i.e. RGBA
         virtual cp::Img getImg32();
+
+    // friend functions
+    // friend cp::Bmp::Bmp(char*);
+    // friend class Bmp;
     };
 }
 

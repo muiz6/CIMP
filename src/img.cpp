@@ -2,9 +2,11 @@
 #include <iostream>
 using namespace cp;
 
+Img::Img() {}
+
 Img::Img(uint8_t* pixelDataInput, int colorDepthInput, int width, int height)
+    :width(width), height(height)
 {
-    // pixelData = pixelDataInput;
     uint32_t size;
     if (colorDepthInput == 24)
     {
@@ -18,11 +20,8 @@ Img::Img(uint8_t* pixelDataInput, int colorDepthInput, int width, int height)
     }
     else
     {
-        this->colorDepth = NULL;
+        this->colorDepth = 0;
     }
-
-    this->width = width;
-    this->height = height;
 
     pixelData = new uint8_t[size];
     for (uint32_t i = 0; i < size; i++)
@@ -64,7 +63,7 @@ uint32_t Img::size() const
     }
     else
     {
-        return NULL;
+        return 0;
     }
 }
 
@@ -80,7 +79,7 @@ int Img::getColorDepth()
     }
     else
     {
-        return NULL;
+        return 0;
     }
 }
 
@@ -106,19 +105,6 @@ uint8_t* Img::getPixelDataInt()
 
 Img Img::getImg24()
 {
-    // uint8_t* pixelDataInput = NULL;
-    // if (colorDepth == 24)
-    // {
-    //     uint32_t size = width * height * 3;
-    //     pixelDataInput = new uint8_t[size];
-    // }
-    // else if (colorDepth == 32)
-    // {
-    //     uint32_t size = width * height * 4;
-    //     pixelDataInput = new uint8_t[size];
-    // }
-    // delete[] pixelDataInput;
-
     if (colorDepth == 24)
     {
         Img img(pixelData, 24, width, height);
