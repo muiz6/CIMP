@@ -5,7 +5,7 @@ ProjectName := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 # compiler
 CC = g++
 # compile with c++11 standard and in debug mode
-CFLAG = -std=c++11 -g
+CFLAG = -std=c++11 -g -Wall
 
 # path variables
 BIN_DIR = build

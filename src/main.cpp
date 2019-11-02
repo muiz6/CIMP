@@ -12,14 +12,16 @@ int main(int argc, char** argv)
     cin >> name;
     string path = "..\\sample\\" + name;
 
-    cp::Bmp bmp(path.c_str());
+    cp::Bmp bmp(path);
     cp::Img img = bmp.getImg24();
 
     cp::Filters fltr(img);
-    fltr.verticalFlip();
+    // fltr.verticalFlip();
+    // fltr.invert();
+    fltr.alienate();
     cp::Img newImg = fltr.getImg24();
 
-    cp::Bmp newBmp(img);
+    cp::Bmp newBmp(newImg);
     newBmp.write24BitBmp("data\\output.bmp");
 
     cin.get();

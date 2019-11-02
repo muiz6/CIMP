@@ -3,6 +3,7 @@
 
 #include "CIMP/img.hpp"
 #include <cstdint>
+#include <string>
 
 // to avoid extra struct padding in file
 #pragma pack(push, 1)
@@ -74,6 +75,8 @@ namespace cp
         /// @brief Create Bmp from existing bmp image file
         /// @param path: path of bmp image, do write extension as well
         Bmp(const char* path);
+
+        Bmp(std::string path);
 
         /// @brief Create Bmp from array of pixel data
         /// @param pixelData: pointer to array of pixel data in RGB sequence,

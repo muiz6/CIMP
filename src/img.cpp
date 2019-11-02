@@ -38,7 +38,7 @@ Img::Img(const Img &obj)
     colorDepth = obj.colorDepth;
 
     pixelData = new uint8_t[obj.size()];
-    for (int i = 0; i < obj.size(); i++)
+    for (unsigned int i = 0; i < obj.size(); i++)
     {
         pixelData[i] = obj.pixelData[i];
     }
@@ -114,7 +114,7 @@ Img Img::getImg24()
     {
         uint32_t size = width * height * 3;
         uint8_t* pixelDataInput = new uint8_t[size];
-        for (int i = 0, j = 0; j < size; i += 3, j += 4)
+        for (unsigned int i = 0, j = 0; j < size; i += 3, j += 4)
         {
             pixelDataInput[i] = pixelData[j];
             pixelDataInput[i + 1] = pixelData[j + 1];
@@ -132,7 +132,7 @@ Img Img::getImg32()
     {
         uint32_t size = width * height * 4;
         uint8_t* pixelDataInput = new uint8_t[size];
-        for (int i = 0, j = 0; j < size; i += 3, j += 4)
+        for (unsigned int i = 0, j = 0; j < size; i += 3, j += 4)
         {
             pixelDataInput[j] = pixelData[i];
             pixelDataInput[j + 1] = pixelData[i + 1];

@@ -16,7 +16,7 @@ void Filters::grayScale()
     uint8_t* filteredPixels = new uint8_t[size];
 
     // applying filter in new image
-    for(int i = 0; i < size; i += 3)
+    for(unsigned int i = 0; i < size; i += 3)
     {
         int avg = (pixelData[i] + pixelData[i + 1] + pixelData[i + 2]) / 3;
         filteredPixels[i] = avg;
@@ -25,7 +25,7 @@ void Filters::grayScale()
     }
 
     // copying filtered image in pixelData
-    for (int i = 0; i < size; i++)
+    for (unsigned int i = 0; i < size; i++)
     {
         pixelData[i] = filteredPixels[i];
     }
@@ -39,7 +39,7 @@ void Filters::invert()
     uint8_t* filteredPixels = new uint8_t[size];
 
     //new invert filter
-    for (int i = 0; i < size; i++)
+    for (unsigned int i = 0; i < size; i++)
     {
         filteredPixels[i] = 255 - pixelData[i];
     }

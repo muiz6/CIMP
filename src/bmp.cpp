@@ -96,7 +96,16 @@ Bmp::Bmp(const char* path)
 
     fin.seekg(46, ios::beg);
     fin.read((char*) temp32, 4);
-    bmpInfoHeader.colorCount = *temp32;
+
+    // 0 is also used to express 256 colors
+    if (*temp32 != 0)
+    {
+        bmpInfoHeader.colorCount = *temp32;
+    }
+    else
+    {
+        bmpInfoHeader.colorCount = 256;
+    }
 
     fin.seekg(50, ios::beg);
     fin.read((char*) temp32, 4);
@@ -136,7 +145,7 @@ Bmp::Bmp(const char* path)
     }
 
     // bytes of pixel data to be read from file
-    // so it works even if img is missing some pixels
+    // so it works even if img is missing some pixels also for 8bit
     streampos begin, end, readSize;
     fin.seekg(bmpHeader.pixelDataOffset, ios::beg);
     begin = fin.tellg();
@@ -157,9 +166,9 @@ Bmp::Bmp(const char* path)
         fin.read((char*) bgr, readSize);
 
         // vertical flip
-        for (int i = 0; i < width; ++i)
+        for (unsigned int i = 0; i < width; ++i)
         {
-            for (int j = 0; j < height; ++j)
+            for (unsigned int j = 0; j < height; ++j)
             {
                 for (int k = 0; k < 1; ++k)
                 {
@@ -169,7 +178,7 @@ Bmp::Bmp(const char* path)
         }
 
         // converting to 24bit rgb
-        for (int i = 0; i < readSize; i++)
+        for (uint32_t i = 0; i < readSize; i++)
         {
             int index = flip[i];
             pixelData[3 * i] = colorTable[4 * index + 2];
@@ -206,9 +215,9 @@ Bmp::Bmp(const char* path)
         // vertical flip
         if (bmpInfoHeader.colorDepth == 24)
         {
-            for (int i = 0; i < width; ++i)
+            for (unsigned int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; ++j)
+                for (unsigned int j = 0; j < height; ++j)
                 {
                     for (int k = 0; k < 3; ++k)
                     {
@@ -219,9 +228,9 @@ Bmp::Bmp(const char* path)
         }
         else if (bmpInfoHeader.colorDepth == 32)
         {
-            for (int i = 0; i < width; ++i)
+            for (unsigned int i = 0; i < width; ++i)
             {
-                for (int j = 0; j < height; ++j)
+                for (unsigned int j = 0; j < height; ++j)
                 {
                     for (int k = 0; k < 4; ++k)
                     {
@@ -234,7 +243,7 @@ Bmp::Bmp(const char* path)
         // bgr to rgb
         if (bmpInfoHeader.colorDepth == 24)
         {
-            for (int i = 0; i < arrSize; i += 3)
+            for (unsigned int i = 0; i < arrSize; i += 3)
             {
                 pixelData[i] = flip[i + 2];
                 pixelData[i + 1] = flip[i + 1];
@@ -243,7 +252,7 @@ Bmp::Bmp(const char* path)
         }
         else if (bmpInfoHeader.colorDepth == 32)
         {
-            for (int i = 0; i < arrSize; i += 4)
+            for (unsigned int i = 0; i < arrSize; i += 4)
             {
                 pixelData[i] = flip[i + 2];
                 pixelData[i + 1] = flip[i + 1];
@@ -258,6 +267,8 @@ Bmp::Bmp(const char* path)
 
     fin.close();
 }
+
+Bmp::Bmp(std::string path): Bmp(path.c_str()) {}
 
 Bmp::Bmp(uint8_t* pixelDataInput, int colorDepth, int width, int height)
 : Img(pixelDataInput, colorDepth, width, height)
@@ -327,124 +338,124 @@ Bmp::~Bmp()
     }
 }
 
-void Bmp::writeToFile(const char* path)
-{
-    std::ofstream fout(path, std::ios::binary);
+// void Bmp::writeToFile(const char* path)
+// {
+//     std::ofstream fout(path, std::ios::binary);
 
-    // write bmpHeader and bmpInfoHeader
-    fout.write((char*) &bmpHeader, sizeof(bmpHeader));
-    fout.write((char*) &bmpInfoHeader, sizeof(bmpInfoHeader));
+//     // write bmpHeader and bmpInfoHeader
+//     fout.write((char*) &bmpHeader, sizeof(bmpHeader));
+//     fout.write((char*) &bmpInfoHeader, sizeof(bmpInfoHeader));
 
-    // write color table to file only if color depth is 8bit
-    if (bmpInfoHeader.colorDepth == 8)
-    {
-        fout.write((char*) colorTable, 1024);
-    }
+//     // write color table to file only if color depth is 8bit
+//     if (bmpInfoHeader.colorDepth == 8)
+//     {
+//         fout.write((char*) colorTable, 1024);
+//     }
 
-    // arranging pixel data as required in bmp format
-    // flipping image vertically +
-    // rgb to bgr
-    uint8_t* flip;
-    uint8_t* bgr;
-    uint32_t size;
-    int width = bmpInfoHeader.bmpWidth;
-    int height = bmpInfoHeader.bmpHeight;
+//     // arranging pixel data as required in bmp format
+//     // flipping image vertically +
+//     // rgb to bgr
+//     uint8_t* flip;
+//     uint8_t* bgr;
+//     uint32_t size;
+//     int width = bmpInfoHeader.bmpWidth;
+//     int height = bmpInfoHeader.bmpHeight;
 
-    if (bmpInfoHeader.colorDepth == 8)
-    {
-        int width = bmpInfoHeader.bmpWidth;
-        int height = bmpInfoHeader.bmpHeight;
-        flip = new uint8_t[width * height];
-        bgr = new uint8_t[width * height];
-    }
-    else if (bmpInfoHeader.colorDepth == 24)
-    {
-        size = width * height * 3;
-        flip = new uint8_t[size];
-        bgr = new uint8_t[size];
-    }
-    else if (bmpInfoHeader.colorDepth == 32)
-    {
-        size = width * height * 4;
-        flip = new uint8_t[size];
-        bgr = new uint8_t[size];
-    }
+//     if (bmpInfoHeader.colorDepth == 8)
+//     {
+//         int width = bmpInfoHeader.bmpWidth;
+//         int height = bmpInfoHeader.bmpHeight;
+//         flip = new uint8_t[width * height];
+//         bgr = new uint8_t[width * height];
+//     }
+//     else if (bmpInfoHeader.colorDepth == 24)
+//     {
+//         size = width * height * 3;
+//         flip = new uint8_t[size];
+//         bgr = new uint8_t[size];
+//     }
+//     else if (bmpInfoHeader.colorDepth == 32)
+//     {
+//         size = width * height * 4;
+//         flip = new uint8_t[size];
+//         bgr = new uint8_t[size];
+//     }
 
-    // vertical flip
-    if (bmpInfoHeader.colorDepth == 8)
-    {
-        for (int i = 0; i < width; ++i)
-        {
-            for (int j = 0; j < height; ++j)
-            {
-                for (int k = 0; k < 1; ++k)
-                {
-                    flip[(i + j * width) * 1 + k] = pixelData[(i + (height - 1 - j) * width) * 1 + k];
-                }
-            }
-        }
-    }
-    else if (bmpInfoHeader.colorDepth == 24)
-    {
-        for (int i = 0; i < width; ++i)
-        {
-            for (int j = 0; j < height; ++j)
-            {
-                for (int k = 0; k < 3; ++k)
-                {
-                    flip[(i + j * width) * 3 + k] = pixelData[(i + (height - 1 - j) * width) * 3 + k];
-                }
-            }
-        }
-    }
-    else if (bmpInfoHeader.colorDepth == 32)
-    {
-        for (int i = 0; i < width; ++i)
-        {
-            for (int j = 0; j < height; ++j)
-            {
-                for (int k = 0; k < 4; ++k)
-                {
-                    flip[(i + j * width) * 4 + k] = pixelData[(i + (height - 1 - j) * width) * 4 + k];
-                }
-            }
-        }
-    }
+//     // vertical flip
+//     if (bmpInfoHeader.colorDepth == 8)
+//     {
+//         for (int i = 0; i < width; ++i)
+//         {
+//             for (int j = 0; j < height; ++j)
+//             {
+//                 for (int k = 0; k < 1; ++k)
+//                 {
+//                     flip[(i + j * width) * 1 + k] = pixelData[(i + (height - 1 - j) * width) * 1 + k];
+//                 }
+//             }
+//         }
+//     }
+//     else if (bmpInfoHeader.colorDepth == 24)
+//     {
+//         for (int i = 0; i < width; ++i)
+//         {
+//             for (int j = 0; j < height; ++j)
+//             {
+//                 for (int k = 0; k < 3; ++k)
+//                 {
+//                     flip[(i + j * width) * 3 + k] = pixelData[(i + (height - 1 - j) * width) * 3 + k];
+//                 }
+//             }
+//         }
+//     }
+//     else if (bmpInfoHeader.colorDepth == 32)
+//     {
+//         for (int i = 0; i < width; ++i)
+//         {
+//             for (int j = 0; j < height; ++j)
+//             {
+//                 for (int k = 0; k < 4; ++k)
+//                 {
+//                     flip[(i + j * width) * 4 + k] = pixelData[(i + (height - 1 - j) * width) * 4 + k];
+//                 }
+//             }
+//         }
+//     }
 
-    // rgb to bgr
-    if (bmpInfoHeader.colorDepth == 8)
-    {
-        for (int i = 0; i < width* height; i++)
-        {
-            bgr[i] = flip[i];
-        }
-    }
-    else if (bmpInfoHeader.colorDepth == 24)
-    {
-        for (int i = 0; i < bmpHeader.fileSize - 54; i += 3)
-        {
-            bgr[i] = flip[i + 2];
-            bgr[i + 1] = flip[i + 1];
-            bgr[i + 2] = flip[i];
-        }
-    }
-    else if (bmpInfoHeader.colorDepth == 32)
-    {
-        for (int i = 0; i < bmpHeader.fileSize - 54; i += 4)
-        {
-            bgr[i] = flip[i + 2];
-            bgr[i + 1] = flip[i + 1];
-            bgr[i + 2] = flip[i];
-            bgr[i + 3] = flip[i + 3];
-        }
-    }
+//     // rgb to bgr
+//     if (bmpInfoHeader.colorDepth == 8)
+//     {
+//         for (int i = 0; i < width* height; i++)
+//         {
+//             bgr[i] = flip[i];
+//         }
+//     }
+//     else if (bmpInfoHeader.colorDepth == 24)
+//     {
+//         for (int i = 0; i < bmpHeader.fileSize - 54; i += 3)
+//         {
+//             bgr[i] = flip[i + 2];
+//             bgr[i + 1] = flip[i + 1];
+//             bgr[i + 2] = flip[i];
+//         }
+//     }
+//     else if (bmpInfoHeader.colorDepth == 32)
+//     {
+//         for (int i = 0; i < bmpHeader.fileSize - 54; i += 4)
+//         {
+//             bgr[i] = flip[i + 2];
+//             bgr[i + 1] = flip[i + 1];
+//             bgr[i + 2] = flip[i];
+//             bgr[i + 3] = flip[i + 3];
+//         }
+//     }
 
-    fout.write((char*) bgr, bmpHeader.fileSize - 54);
-    fout.close();
+//     fout.write((char*) bgr, bmpHeader.fileSize - 54);
+//     fout.close();
 
-    delete[] flip;
-    delete[] bgr;
-}
+//     delete[] flip;
+//     delete[] bgr;
+// }
 
 void Bmp::setDotDensity(int dpi)
 {
@@ -495,7 +506,7 @@ void Bmp::write24BitBmp(const char* path)
     }
 
     // rgb to bgr
-    for (int i = 0; i < bmpHeader.fileSize - 54; i += 3)
+    for (unsigned int i = 0; i < bmpHeader.fileSize - 54; i += 3)
     {
         bgr[i] = flip[i + 2];
         bgr[i + 1] = flip[i + 1];
