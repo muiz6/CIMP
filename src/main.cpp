@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     cp::Img newImg = fltr.getImg24();
 
     cp::Bmp newBmp(newImg);
-    newBmp.write24BitBmp("data\\output.bmp");
+    newBmp.write32BitBmp("data\\output.bmp");
 
     cin.get();
     return 0;
