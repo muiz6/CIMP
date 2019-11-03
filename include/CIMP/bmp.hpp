@@ -3,7 +3,7 @@
 
 #include "CIMP/img.hpp"
 #include <cstdint>
-#include <vector>
+#include <string>
 
 // to avoid extra struct padding in file
 #pragma pack(push, 1)
@@ -11,14 +11,14 @@
 namespace cp
 {
     /// @brief class to read/write bitmap images
-    class Bmp
+    class Bmp: public cp::Img
     {
     private:
 
         // Bmp file header data - 14 bytes
         struct BmpHeader
         {
-            // byt no 0 & 1
+            // byte no 0 & 1
             char fileType[2];
 
             // size of bmp file
@@ -57,11 +57,10 @@ namespace cp
             // in pixel per metre
             uint32_t verticalResolution;
 
+            // no of color table entries
             uint32_t colorCount;
             uint32_t impColorCount;
         } bmpInfoHeader;
-
-        uint8_t* pixelData;
 
         uint8_t* colorTable = NULL;
 
@@ -74,7 +73,11 @@ namespace cp
 
         /// @brief Create Bmp from existing bmp image file
         /// @param path: path of bmp image, do write extension as well
-        Bmp(char* path);
+        Bmp(const char* path);
+
+        /// @brief Create Bmp from existing bmp image file
+        /// @param path: path of bmp image, do write extension as well
+        Bmp(std::string path);
 
         /// @brief Create Bmp from array of pixel data
         /// @param pixelData: pointer to array of pixel data in RGB sequence,
@@ -85,12 +88,6 @@ namespace cp
         /// @param width: width of bitmap in pixels
         /// @param height: height of bitmap in pixels
         Bmp(uint8_t* pixelData, int colorDepth, int width, int height);
-
-        /// @brief Create Bmp from vector of pixel data
-        /// @param pixelDataInput: vector of pixel data in RGB sequence,
-        /// must be thrice the size of product of width and height for 24bit Bmp
-        /// i.e vec.size() = width * height * 3
-        Bmp(std::vector<unsigned char> &pixelDataInput, int width, int height);
 
         /// @brief create Bmp from cp::Img object
         /// @param img: object of cp::Img class
@@ -103,38 +100,29 @@ namespace cp
         /// @param dpi: desired bit depth of bmp in dots per inch
         void setDotDensity(int dpi);
 
-        /// @brief writes the bmp to file, let Bmp determine the format
-        /// @param path: path of bmp image, do write .bmp extension as well
-        void writeToFile(char* path);
+        /// @brief write 24bit bmp
+        /// @param path: path to store file
+        void write8BitBmp(const char* path);
 
-        /// @brief must be called when ur done with the Bmp to free memory
-        void close();
+        /// @brief write 24bit bmp
+        /// @param path: path to store file
+        void write8BitBmp(std::string path);
 
-        /// @return height of bmp image in pixels
-        uint32_t getHeight();
+        /// @brief write 24bit bmp
+        /// @param path: path to store file
+        void write24BitBmp(const char* path);
 
-        /// @return width of bmp image in pixels
-        uint32_t getWidth();
+        /// @brief write 24bit bmp
+        /// @param path: path to store file
+        void write24BitBmp(std::string path);
 
-        /// @return pointer to array of pixel data in 24bit RGB sequence
-        uint8_t* getPixelDataInt();
+        /// @brief write 32bit bmp
+        /// @param path: path to store file
+        void write32BitBmp(const char* path);
 
-        /// @return pointer to array of pixel data in 24bit RGB sequence
-        unsigned char* getPixelDataChar();
-
-        /// @return size of pixel data in bytes
-        int size();
-
-        /// @return returns bitmap in the form of 24bit cp::Img object
-        cp::Img getImg24();
-
-        cp::Img getImg32();
-
-        void write8BitBmp(char* path);
-
-        void write24BitBmp(char* path);
-
-        void write32BitBmp(char* path);
+        /// @brief write 32bit bmp
+        /// @param path: path to store file
+        void write32BitBmp(std::string path);
     };
 }
 

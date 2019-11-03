@@ -1,22 +1,33 @@
 #include "CIMP/cimp.hpp"
 #include <iostream>
+#include <string>
 using namespace std;
 
 int main(int argc, char** argv)
 {
     cout << "HelloWorld!\n";
 
-    cp::Bmp bmp("..\\sample\\bmp-24bit-2.bmp");
-    cp::Img img = bmp.getImg24();
+    string name;
+    cout << "Enter file name : ";
+    cin >> name;
+    string path = "..\\sample\\" + name;
 
-    cp::Filters fltr(img);
-    fltr.alienate();
-    cp::Img newImg = fltr.getImg24();
+    cp::Bmp bmp(path);
+    // cp::Img img = bmp.getImg24();
+    bmp.write8BitBmp("data\\output.bmp");
+    bmp.write24BitBmp("data\\out24.bmp");
+    bmp.write32BitBmp("data\\out32.bmp");
+    bmp.write24BitBmp("data\\out24-2.bmp");
+    bmp.write8BitBmp("data\\out8-2.bmp");
 
-    cp::Bmp newBmp(newImg);
-    newBmp.writeToFile("data\\output.bmp");
-    newBmp.close();
-    bmp.close();
+    // cp::Filters fltr(img);
+    // fltr.verticalFlip();
+    // fltr.invert();
+    // fltr.alienate();
+    // cp::Img newImg = fltr.getImg24();
+
+    // cp::Bmp newBmp(newImg);
+    // newBmp.write8BitBmp("data\\output.bmp");
 
     cin.get();
     return 0;

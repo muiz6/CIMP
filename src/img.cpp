@@ -2,9 +2,11 @@
 #include <iostream>
 using namespace cp;
 
+Img::Img() {}
+
 Img::Img(uint8_t* pixelDataInput, int colorDepthInput, int width, int height)
+    :width(width), height(height)
 {
-    // pixelData = pixelDataInput;
     uint32_t size;
     if (colorDepthInput == 24)
     {
@@ -18,11 +20,8 @@ Img::Img(uint8_t* pixelDataInput, int colorDepthInput, int width, int height)
     }
     else
     {
-        this->colorDepth = NULL;
+        this->colorDepth = 0;
     }
-
-    this->width = width;
-    this->height = height;
 
     pixelData = new uint8_t[size];
     for (uint32_t i = 0; i < size; i++)
@@ -33,13 +32,12 @@ Img::Img(uint8_t* pixelDataInput, int colorDepthInput, int width, int height)
 
 Img::Img(const Img &obj)
 {
-
     width = obj.width;
     height = obj.height;
     colorDepth = obj.colorDepth;
 
     pixelData = new uint8_t[obj.size()];
-    for (int i = 0; i < obj.size(); i++)
+    for (unsigned int i = 0; i < obj.size(); i++)
     {
         pixelData[i] = obj.pixelData[i];
     }
@@ -64,7 +62,7 @@ uint32_t Img::size() const
     }
     else
     {
-        return NULL;
+        return 0;
     }
 }
 
@@ -80,7 +78,7 @@ int Img::getColorDepth()
     }
     else
     {
-        return NULL;
+        return 0;
     }
 }
 
@@ -106,19 +104,6 @@ uint8_t* Img::getPixelDataInt()
 
 Img Img::getImg24()
 {
-    // uint8_t* pixelDataInput = NULL;
-    // if (colorDepth == 24)
-    // {
-    //     uint32_t size = width * height * 3;
-    //     pixelDataInput = new uint8_t[size];
-    // }
-    // else if (colorDepth == 32)
-    // {
-    //     uint32_t size = width * height * 4;
-    //     pixelDataInput = new uint8_t[size];
-    // }
-    // delete[] pixelDataInput;
-
     if (colorDepth == 24)
     {
         Img img(pixelData, 24, width, height);
@@ -128,7 +113,7 @@ Img Img::getImg24()
     {
         uint32_t size = width * height * 3;
         uint8_t* pixelDataInput = new uint8_t[size];
-        for (int i = 0, j = 0; j < size; i += 3, j += 4)
+        for (unsigned int i = 0, j = 0; i < size; i += 3, j += 4)
         {
             pixelDataInput[i] = pixelData[j];
             pixelDataInput[i + 1] = pixelData[j + 1];
@@ -136,7 +121,12 @@ Img Img::getImg24()
             // pixelData[j + 3] is skipped
         }
         Img img(pixelDataInput, 24, width, height);
+        delete[] pixelDataInput;
         return img;
+    }
+    else
+    {
+        return Img();
     }
 }
 
@@ -146,7 +136,7 @@ Img Img::getImg32()
     {
         uint32_t size = width * height * 4;
         uint8_t* pixelDataInput = new uint8_t[size];
-        for (int i = 0, j = 0; j < size; i += 3, j += 4)
+        for (unsigned int i = 0, j = 0; j < size; i += 3, j += 4)
         {
             pixelDataInput[j] = pixelData[i];
             pixelDataInput[j + 1] = pixelData[i + 1];
@@ -154,11 +144,16 @@ Img Img::getImg32()
             pixelDataInput[j + 3] = 255;
         }
         Img img(pixelDataInput, 32, width, height);
+        delete[] pixelDataInput;
         return img;
     }
     else if (colorDepth == 32)
     {
         Img img(pixelData, 32, width, height);
         return img;
+    }
+    else
+    {
+        return Img();
     }
 }
