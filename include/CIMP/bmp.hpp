@@ -100,7 +100,13 @@ namespace cp
         /// @param dpi: desired bit depth of bmp in dots per inch
         void setDotDensity(int dpi);
 
+        /// @brief write 24bit bmp
+        /// @param path: path to store file
         void write8BitBmp(const char* path);
+
+        /// @brief write 24bit bmp
+        /// @param path: path to store file
+        void write8BitBmp(std::string path);
 
         /// @brief write 24bit bmp
         /// @param path: path to store file

@@ -376,7 +376,7 @@ void Bmp::write8BitBmp(const char* path)
         step = 4;
     }
 
-    for (int i = 0; i < size(); i += step)
+    for (unsigned int i = 0; i < size(); i += step)
     {
         int pixel[3];
         for (int j = 0; j < 3; j++)
@@ -439,6 +439,11 @@ void Bmp::write8BitBmp(const char* path)
     delete[] bgr;
     delete[] flip;
     fout.close();
+}
+
+void Bmp::write8BitBmp(std::string path)
+{
+    write8BitBmp(path.c_str());
 }
 
 void Bmp::write24BitBmp(const char* path)
@@ -508,7 +513,7 @@ void Bmp::write32BitBmp(const char* path)
     int width = bmpInfoHeader.bmpWidth;
     int height = bmpInfoHeader.bmpHeight;
 
-    // according to 24bit color depth
+    // according to 32bit color depth
     uint32_t size = width * height * 4;
     uint8_t *flip = new uint8_t[size], *bgr = new uint8_t[size];
 
@@ -525,12 +530,12 @@ void Bmp::write32BitBmp(const char* path)
     }
     else if (colorDepth == 32)
     {
-        for (unsigned int i = 0, j = 0; i < size; i++)
+        for (unsigned int i = 0; i < size; i += 4)
         {
-            bgr[i] = pixelData[j + 2];
-            bgr[i + 1] = pixelData[j + 1];
-            bgr[i + 2] = pixelData[j];
-            bgr[i + 3] = pixelData[j + 3];
+            bgr[i] = pixelData[i + 2];
+            bgr[i + 1] = pixelData[i + 1];
+            bgr[i + 2] = pixelData[i];
+            bgr[i + 3] = pixelData[i + 3];
         }
     }
 

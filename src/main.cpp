@@ -15,6 +15,10 @@ int main(int argc, char** argv)
     cp::Bmp bmp(path);
     // cp::Img img = bmp.getImg24();
     bmp.write8BitBmp("data\\output.bmp");
+    bmp.write24BitBmp("data\\out24.bmp");
+    bmp.write32BitBmp("data\\out32.bmp");
+    bmp.write24BitBmp("data\\out24-2.bmp");
+    bmp.write8BitBmp("data\\out8-2.bmp");
 
     // cp::Filters fltr(img);
     // fltr.verticalFlip();
