@@ -13,16 +13,17 @@ int main(int argc, char** argv)
     string path = "..\\sample\\" + name;
 
     cp::Bmp bmp(path);
-    cp::Img img = bmp.getImg24();
+    // cp::Img img = bmp.getImg24();
+    bmp.write8BitBmp("data\\output.bmp");
 
-    cp::Filters fltr(img);
+    // cp::Filters fltr(img);
     // fltr.verticalFlip();
-    fltr.invert();
+    // fltr.invert();
     // fltr.alienate();
-    cp::Img newImg = fltr.getImg24();
+    // cp::Img newImg = fltr.getImg24();
 
-    cp::Bmp newBmp(newImg);
-    newBmp.write32BitBmp("data\\output.bmp");
+    // cp::Bmp newBmp(newImg);
+    // newBmp.write8BitBmp("data\\output.bmp");
 
     cin.get();
     return 0;

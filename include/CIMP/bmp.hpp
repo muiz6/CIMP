@@ -110,6 +110,8 @@ namespace cp
         /// @param path: path to store file
         void write24BitBmp(std::string path);
 
+        /// @brief write 32bit bmp
+        /// @param path: path to store file
         void write32BitBmp(const char* path);
 
         /// @brief write 32bit bmp
