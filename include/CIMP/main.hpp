@@ -5,10 +5,11 @@
 
 namespace cp
 {
-    class Main : public wxApp
+    class Main: public wxApp
     {
+    private:
+
     public:
-        /// @brief main method to launch a wx application
         virtual bool OnInit();
     };
 }
