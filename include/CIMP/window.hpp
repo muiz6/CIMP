@@ -34,6 +34,7 @@ namespace cp
 		void alienate(wxCommandEvent &event);
 		void grayScale(wxCommandEvent &event);
 		void vFlip(wxCommandEvent &event);
+		void saveFile(wxCommandEvent &event);
 
 		DECLARE_EVENT_TABLE()
 	};

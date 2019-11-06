@@ -1,6 +1,7 @@
 #include "CIMP/window.hpp"
 #include "CIMP/cimp.hpp"
 #include <string.h>
+#include <iostream>
 #include <wx/filedlg.h>
 using namespace cp;
 
@@ -13,6 +14,7 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_MENU(3, grayScale)
 	EVT_MENU(4, alienate)
 	EVT_MENU(5, vFlip)
+	EVT_MENU(6, saveFile)
 END_EVENT_TABLE()
 
 Window::Window(const char *title, int width, int height)
@@ -26,6 +28,7 @@ Window::Window(const char *title, int width, int height)
 
 	file->Append(0, "New");
 	file->Append(1, "Open");
+	file->Append(6, "Save As");
 	file->Append(wxID_EXIT, "Exit");
 
 	filters->Append(3, "Gray Scale");
@@ -56,20 +59,23 @@ void Window::newFile(wxCommandEvent &event)
 
 void Window::openFile(wxCommandEvent &event)
 {
-	wxFileDialog *open = new wxFileDialog(this);
+	wxFileDialog *open = new wxFileDialog(this, "Open");
 	open->SetWildcard("*.bmp");
-	open->ShowModal();
+	if (open->ShowModal() == wxID_OK)
+	{
+		auto path = open->GetPath();
+		Bmp bmp((std::string) path);
 
-	auto path = open->GetPath();
-	Bmp bmp((std::string) path);
+		buffer = new wxImage(bmp.getWidth(), bmp.getHeight(), bmp.getRGB());
+		canvasWidth = 800;
+		float ratio = (float)canvasWidth / (float)bmp.getWidth();
+		int height = ratio * bmp.getHeight();
+		// buffer->Rescale(canvasWidth, height);
+		wxImage displayImg = *buffer;
+		displayImg.Rescale(canvasWidth, height);
 
-	buffer = new wxImage(bmp.getWidth(), bmp.getHeight(), bmp.getPixelDataInt());
-	canvasWidth = 800;
-	float ratio = (float)canvasWidth / (float)bmp.getWidth();
-	int height = ratio * bmp.getHeight();
-	buffer->Rescale(canvasWidth, height);
-
-	canvas = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(*buffer), wxPoint(10, 10), wxSize(canvasWidth, height));
+		canvas = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(displayImg), wxPoint(10, 10), wxSize(canvasWidth, height));
+	}
 }
 
 void Window::onExit(wxCommandEvent &event)
@@ -84,7 +90,11 @@ void Window::invertColors(wxCommandEvent &event)
 	fltr.invert();
 
 	buffer->SetData(fltr.getPixelDataInt());
-	wxBitmap rslt(*buffer, 24);
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
 	canvas->SetBitmap(rslt);
 }
 
@@ -95,7 +105,11 @@ void Window::alienate(wxCommandEvent &event)
 	fltr.alienate();
 
 	buffer->SetData(fltr.getPixelDataInt());
-	wxBitmap rslt(*buffer, 24);
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
 	canvas->SetBitmap(rslt);
 }
 
@@ -106,7 +120,11 @@ void Window::grayScale(wxCommandEvent &event)
 	fltr.grayScale();
 
 	buffer->SetData(fltr.getPixelDataInt());
-	wxBitmap rslt(*buffer, 24);
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
 	canvas->SetBitmap(rslt);
 }
 
@@ -117,6 +135,37 @@ void Window::vFlip(wxCommandEvent &event)
 	fltr.verticalFlip();
 
 	buffer->SetData(fltr.getPixelDataInt());
-	wxBitmap rslt(*buffer, 24);
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
 	canvas->SetBitmap(rslt);
+}
+
+void Window::saveFile(wxCommandEvent &event)
+{
+	wxFileDialog *save = new wxFileDialog(this);
+	save->SetWindowStyle(wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+	save->SetMessage("Save As");
+	save->SetWildcard("24-bit Bitmap (*.bmp)|*.bmp|32-bit Bitmap (*.bmp)|*.bmp|8-bit Bitmap (*.bmp)|*.bmp");
+	save->SetFilename("untitled");
+	if(save->ShowModal() == wxID_OK)
+	{
+		Bmp bmp(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
+		wxString name = save->GetPath();
+		int choice = save->GetFilterIndex();
+		if (choice == 0)
+		{
+			bmp.write24BitBmp(name);
+		}
+		else if (choice == 1)
+		{
+			bmp.write32BitBmp(name);
+		}
+		else if (choice == 2)
+		{
+			bmp.write8BitBmp(name);
+		}
+	}
 }
