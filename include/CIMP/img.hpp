@@ -59,9 +59,14 @@ namespace cp
         /// @return cp::Img object of 32bit i.e. RGBA
         virtual cp::Img getImg32();
 
-    // friend functions
-    // friend cp::Bmp::Bmp(char*);
-    // friend class Bmp;
+        /// @brief get pixel data in RGB array
+        /// @return pointer to dynamic array of 24bit RGB pixel data
+        virtual uint8_t* getRGB();
+
+        /// @brief get alpha channel separately
+        /// @return pointer to dynamic array of alpha channel
+        /// only valid if colorDepth is 32bit
+        virtual uint8_t* getAlpha();
     };
 }
 

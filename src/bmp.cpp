@@ -5,7 +5,6 @@
 using namespace cp;
 
 Bmp::Bmp(int width, int height)
-: Img(NULL, 24, width, height)
 {
     // initializing bmpHeader
     bmpHeader.fileType[0] = 'B';
@@ -26,6 +25,11 @@ Bmp::Bmp(int width, int height)
     bmpInfoHeader.verticalResolution = 3780;
     bmpInfoHeader.colorCount = 0;
     bmpInfoHeader.impColorCount = 0;
+
+    // initializing cp::Img members
+    this->width = width;
+    this->height = height;
+    this->colorDepth = 24;
 
     // deleted in destructor
     pixelData = new uint8_t[width * height * 3];

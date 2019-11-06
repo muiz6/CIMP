@@ -157,3 +157,43 @@ Img Img::getImg32()
         return Img();
     }
 }
+
+uint8_t* Img::getRGB()
+{
+    int step;
+    if (colorDepth == 24)
+    {
+        step = 3;
+    }
+    else if (colorDepth == 32)
+    {
+        step = 4;
+    }
+    uint32_t size = width * height * 3;
+    uint8_t* rgb = new uint8_t[size];
+    for (unsigned int i = 0, j = 0; i < size; i += 3, j += 4)
+    {
+        rgb[i] = pixelData[j];
+        rgb[i + 1] = pixelData[j + 1];
+        rgb[i + 2] = pixelData[j + 2];
+    }
+    return rgb;
+}
+
+uint8_t* Img::getAlpha()
+{
+    if (colorDepth == 32)
+    {
+        unsigned int size = width * height;
+        uint8_t* alpha = new uint8_t[size];
+        for (unsigned int i = 0, j = 0; i < size; i++, j += 4)
+        {
+            alpha[i] = pixelData[j + 3];
+        }
+        return alpha;
+    }
+    else
+    {
+        return NULL;
+    }
+}
