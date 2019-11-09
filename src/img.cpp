@@ -95,7 +95,7 @@ int Img::getHeight()
 uint8_t* Img::getPixelDataInt()
 {
     uint8_t* result = new uint8_t[this->size()];
-    for (int i = 0; i < this->size(); i++)
+    for (unsigned int i = 0; i < this->size(); i++)
     {
         result[i] = pixelData[i];
     }
@@ -171,7 +171,7 @@ uint8_t* Img::getRGB()
     }
     uint32_t size = width * height * 3;
     uint8_t* rgb = new uint8_t[size];
-    for (unsigned int i = 0, j = 0; i < size; i += 3, j += 4)
+    for (unsigned int i = 0, j = 0; i < size; i += 3, j += step)
     {
         rgb[i] = pixelData[j];
         rgb[i + 1] = pixelData[j + 1];
