@@ -8,3 +8,5 @@ sample
 build/*.exe
 *.exe
 obj/*.o
+src/png.cpp
+include/CIMP/png.hpp

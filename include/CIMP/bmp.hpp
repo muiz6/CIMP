@@ -10,10 +10,10 @@
 
 namespace cp
 {
-    /// @brief class to read/write bitmap images
+    /// @brief class to read bitmap images
     class Bmp: public cp::Img
     {
-    private:
+    protected:
 
         // Bmp file header data - 14 bytes
         struct BmpHeader
@@ -99,30 +99,6 @@ namespace cp
         /// @brief set bit depth - default is 96 dpi
         /// @param dpi: desired bit depth of bmp in dots per inch
         void setDotDensity(int dpi);
-
-        /// @brief write 24bit bmp
-        /// @param path: path to store file
-        void write8BitBmp(const char* path);
-
-        /// @brief write 24bit bmp
-        /// @param path: path to store file
-        void write8BitBmp(std::string path);
-
-        /// @brief write 24bit bmp
-        /// @param path: path to store file
-        void write24BitBmp(const char* path);
-
-        /// @brief write 24bit bmp
-        /// @param path: path to store file
-        void write24BitBmp(std::string path);
-
-        /// @brief write 32bit bmp
-        /// @param path: path to store file
-        void write32BitBmp(const char* path);
-
-        /// @brief write 32bit bmp
-        /// @param path: path to store file
-        void write32BitBmp(std::string path);
     };
 }
 
