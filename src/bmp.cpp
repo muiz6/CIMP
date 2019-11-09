@@ -347,7 +347,3 @@ void Bmp::setDotDensity(int dpi)
     bmpInfoHeader.horizontalResolution = ppm;
     bmpInfoHeader.verticalResolution = ppm;
 }
-
-void Bmp::writeToFile(const char *path) {}
-
-void Bmp::writeToFile(std::string path) {}

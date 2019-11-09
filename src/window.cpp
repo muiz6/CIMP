@@ -152,25 +152,21 @@ void Window::saveFile(wxCommandEvent &event)
 	save->SetFilename("untitled");
 	if(save->ShowModal() == wxID_OK)
 	{
-		// Bmp bmp(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-		Bmp *bmp;
+		ImageFile *bmp;
 		wxString name = save->GetPath();
 		int choice = save->GetFilterIndex();
 		if (choice == 0)
 		{
 			bmp = new cp::Bmp24Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-			// bmp.write24BitBmp(name);
 			bmp->writeToFile(name);
 		}
 		else if (choice == 1)
 		{
-			// bmp.write32BitBmp(name);
 			bmp = new cp::Bmp32Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
 			bmp->writeToFile(name);
 		}
 		else if (choice == 2)
 		{
-			// bmp.write8BitBmp(name);
 			bmp = new cp::Bmp8Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
 			bmp->writeToFile(name);
 		}

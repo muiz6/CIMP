@@ -2,6 +2,12 @@
 #include <fstream>
 using namespace cp;
 
+Bmp8Bit::Bmp8Bit(int width, int height): Bmp(width, height) {}
+
+Bmp8Bit::Bmp8Bit(const char *path): Bmp(path) {}
+
+Bmp8Bit::Bmp8Bit(std::string path): Bmp(path) {}
+
 Bmp8Bit::Bmp8Bit(uint8_t* pixelData, int colorDepth, int width, int height)
     : Bmp(pixelData, colorDepth, width, height) {}
 
@@ -100,9 +106,4 @@ void Bmp8Bit::writeToFile(const char *path)
     delete[] bgr;
     delete[] flip;
     fout.close();
-}
-
-void Bmp8Bit::writeToFile(std::string path)
-{
-    writeToFile(path.c_str());
 }

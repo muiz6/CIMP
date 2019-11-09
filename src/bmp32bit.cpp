@@ -2,6 +2,12 @@
 #include <fstream>
 using namespace cp;
 
+Bmp32Bit::Bmp32Bit(int width, int height): Bmp (width, height) {}
+
+Bmp32Bit::Bmp32Bit(const char *path): Bmp(path) {}
+
+Bmp32Bit::Bmp32Bit(std::string path): Bmp(path) {}
+
 Bmp32Bit::Bmp32Bit(uint8_t* pixelData, int colorDepth, int width, int height)
     : Bmp(pixelData, colorDepth, width, height) {}
 
@@ -61,9 +67,4 @@ void Bmp32Bit::writeToFile(const char *path)
     delete[] flip;
 
     fout.close();
-}
-
-void Bmp32Bit::writeToFile(std::string path)
-{
-    writeToFile(path.c_str());
 }
