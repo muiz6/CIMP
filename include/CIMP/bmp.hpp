@@ -3,7 +3,6 @@
 
 #include "CIMP/img.hpp"
 #include <cstdint>
-#include <string>
 
 // to avoid extra struct padding in file
 #pragma pack(push, 1)
@@ -75,10 +74,6 @@ namespace cp
         /// @param path: path of bmp image, do write extension as well
         Bmp(const char* path);
 
-        /// @brief Create Bmp from existing bmp image file
-        /// @param path: path of bmp image, do write extension as well
-        Bmp(std::string path);
-
         /// @brief Create Bmp from array of pixel data
         /// @param pixelData: pointer to array of pixel data in RGB sequence,
         /// must be thrice the size of product of width and height for 24bit Bmp
@@ -91,10 +86,12 @@ namespace cp
 
         /// @brief create Bmp from cp::Img object
         /// @param img: object of cp::Img class
-        Bmp(cp::Img &img);
+        Bmp(const Img &img);
 
         /// destructor
         ~Bmp();
+
+        static bool isBmp(const char *path);
 
         /// @brief set bit depth - default is 96 dpi
         /// @param dpi: desired bit depth of bmp in dots per inch

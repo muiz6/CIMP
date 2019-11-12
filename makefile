@@ -34,7 +34,7 @@ echo:
 # build in debug mode
 $(BIN_DIR)/$(ProjectName): $(OBJS) # $< not working!
 	@echo bulding project:
-	$(CC) $(CFLAG) $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS)
+	$(CC) $(CFLAG) $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS) -lz
 	@echo done!
 
 # static rule

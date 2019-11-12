@@ -1,5 +1,6 @@
 #include "CIMP/window.hpp"
 #include "CIMP/cimp.hpp"
+#include "CIMP/png.hpp"
 #include <string.h>
 #include <iostream>
 #include <wx/filedlg.h>
@@ -20,6 +21,7 @@ END_EVENT_TABLE()
 Window::Window(const char *title, int width, int height)
 : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
 {
+	// creating menu
 	menuBar = new wxMenuBar;
 
 	file = new wxMenu;
@@ -44,6 +46,12 @@ Window::Window(const char *title, int width, int height)
 
 	panel = new wxPanel(this, wxID_ANY);
 	panel->SetBackgroundColour(wxColour(55, 55, 55));
+
+	// creating tool bar
+	// toolBar = new wxToolBar(panel, wxID_ANY);
+	// toolBar->SetWindowStyleFlag(wxstretc);
+	// toolBar->AddTool(wxID_ANY, "zoom In", wxBitmap("Data\\zoom-in.png", wxBITMAP_TYPE_PNG));
+	// toolBar->AddTool(wxID_ANY, "zoom In", wxBitmap("Data\\zoom-out.png", wxBITMAP_TYPE_PNG));
 
 	this->Centre();
 }
@@ -148,7 +156,7 @@ void Window::saveFile(wxCommandEvent &event)
 	wxFileDialog *save = new wxFileDialog(this);
 	save->SetWindowStyle(wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	save->SetMessage("Save As");
-	save->SetWildcard("24-bit Bitmap (*.bmp)|*.bmp|32-bit Bitmap (*.bmp)|*.bmp|8-bit Bitmap (*.bmp)|*.bmp");
+	save->SetWildcard("24-bit Bitmap (*.bmp)|*.bmp|32-bit Bitmap (*.bmp)|*.bmp|8-bit Bitmap (*.bmp)|*.bmp|PNG (*.png)|*.png");
 	save->SetFilename("untitled");
 	if(save->ShowModal() == wxID_OK)
 	{
@@ -158,17 +166,22 @@ void Window::saveFile(wxCommandEvent &event)
 		if (choice == 0)
 		{
 			bmp = new cp::Bmp24Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-			bmp->writeToFile(name);
+			bmp->writeToFile(name, cpBITMAP_24_BIT);
 		}
 		else if (choice == 1)
 		{
 			bmp = new cp::Bmp32Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-			bmp->writeToFile(name);
+			// bmp->writeToFile(name);
 		}
 		else if (choice == 2)
 		{
 			bmp = new cp::Bmp8Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-			bmp->writeToFile(name);
+			// bmp->writeToFile(name);
+		}
+		else if (choice == 3)
+		{
+			bmp = new cp::PNG(256, 256);
+			// bmp->writeToFile(name);
 		}
 		delete bmp;
 	}

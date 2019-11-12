@@ -270,8 +270,6 @@ Bmp::Bmp(const char* path)
     fin.close();
 }
 
-Bmp::Bmp(std::string path): Bmp(path.c_str()) {}
-
 Bmp::Bmp(uint8_t* pixelDataInput, int colorDepth, int width, int height)
 : Img(pixelDataInput, colorDepth, width, height)
 {
@@ -307,7 +305,7 @@ Bmp::Bmp(uint8_t* pixelDataInput, int colorDepth, int width, int height)
     bmpInfoHeader.impColorCount = 0;
 }
 
-Bmp::Bmp(Img &img)
+Bmp::Bmp(const Img &img)
 : Img(img)
 {
     // initializing bmpHeader
@@ -337,6 +335,23 @@ Bmp::~Bmp()
     if (colorTable != NULL)
     {
         delete[] colorTable;
+    }
+}
+
+bool isBmp(const char *path)
+{
+    std::ifstream fin(path, std::ios::binary);
+    char fileType[2];
+    fin.read(fileType, 2);
+    fin.close();
+
+    if (fileType[0] == 'B' && fileType[1] == 'M')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 

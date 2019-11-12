@@ -6,10 +6,10 @@ Bmp8Bit::Bmp8Bit(int width, int height): Bmp(width, height) {}
 
 Bmp8Bit::Bmp8Bit(const char *path): Bmp(path) {}
 
-Bmp8Bit::Bmp8Bit(std::string path): Bmp(path) {}
-
 Bmp8Bit::Bmp8Bit(uint8_t* pixelData, int colorDepth, int width, int height)
     : Bmp(pixelData, colorDepth, width, height) {}
+
+Bmp8Bit::Bmp8Bit(const Img &img): Bmp(img) {}
 
 void Bmp8Bit::writeToFile(const char *path)
 {

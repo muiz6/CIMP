@@ -2,12 +2,12 @@
 #define BMP32BIT_H
 
 #include "CIMP/bmp.hpp"
-#include "CIMP/imagefile.hpp"
+#include "CIMP/imagefileinterface.hpp"
 #include <cstdint>
 
 namespace cp
 {
-    class Bmp32Bit: public Bmp, public ImageFile
+    class Bmp32Bit: public Bmp, public ImageFileInterface
     {
     public:
 
@@ -20,10 +20,6 @@ namespace cp
         /// @param path: path of bmp image, do write extension as well
         Bmp32Bit(const char* path);
 
-        /// @brief Create Bmp from existing bmp image file
-        /// @param path: path of bmp image, do write extension as well
-        Bmp32Bit(std::string path);
-
         /// @brief Create Bmp from array of pixel data
         /// @param pixelData: pointer to array of pixel data in RGB sequence,
         /// must be thrice the size of product of width and height for 24bit Bmp
@@ -33,6 +29,10 @@ namespace cp
         /// @param width: width of bitmap in pixels
         /// @param height: height of bitmap in pixels
         Bmp32Bit(uint8_t* pixelData, int colorDepth, int width, int height);
+
+        /// @brief initialize from cp::Img object
+        /// @param img: object of cp::Img class
+        Bmp32Bit(const Img &img);
 
         /// @brief write 32bit bmp
         /// @param path: path to store file

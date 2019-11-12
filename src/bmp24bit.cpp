@@ -6,10 +6,10 @@ Bmp24Bit::Bmp24Bit(int width, int height): Bmp (width, height) {}
 
 Bmp24Bit::Bmp24Bit(const char *path): Bmp(path) {}
 
-Bmp24Bit::Bmp24Bit(std::string path): Bmp(path) {}
-
 Bmp24Bit::Bmp24Bit(uint8_t* pixelData, int colorDepth, int width, int height)
     : Bmp(pixelData, colorDepth, width, height) {}
+
+Bmp24Bit::Bmp24Bit(Img &img): Bmp(img) {}
 
 void Bmp24Bit::writeToFile(const char * path)
 {
