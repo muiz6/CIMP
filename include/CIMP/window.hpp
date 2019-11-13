@@ -17,6 +17,8 @@ namespace cp
 		wxMenu* filters;
 		wxMenu* imgMenu;
 
+		wxToolBar* toolBar;
+
 		wxPanel* panel;
 
 		int canvasWidth;

@@ -1,10 +1,10 @@
 #include "CIMP/bmp.hpp"
 #include <fstream>
-#include <iostream>
 
 using namespace cp;
 
 Bmp::Bmp(int width, int height)
+    : colorTable(NULL), flagIsOpen(true)
 {
     // initializing bmpHeader
     bmpHeader.fileType[0] = 'B';
@@ -42,7 +42,7 @@ Bmp::Bmp(int width, int height)
 }
 
 Bmp::Bmp(const char* path)
-// : Img()
+    : flagIsOpen(true), colorTable(NULL)
 {
     using namespace std;
 
@@ -144,6 +144,7 @@ Bmp::Bmp(const char* path)
     else
     {
         colorDepth = 0;
+        flagIsOpen = false;
     }
 
     // bytes of pixel data to be read from file
@@ -270,10 +271,8 @@ Bmp::Bmp(const char* path)
     fin.close();
 }
 
-Bmp::Bmp(std::string path): Bmp(path.c_str()) {}
-
 Bmp::Bmp(uint8_t* pixelDataInput, int colorDepth, int width, int height)
-: Img(pixelDataInput, colorDepth, width, height)
+    : flagIsOpen(true), colorTable(NULL), Img(pixelDataInput, colorDepth, width, height)
 {
     // initializing bmpHeader
     bmpHeader.fileType[0] = 'B';
@@ -289,6 +288,7 @@ Bmp::Bmp(uint8_t* pixelDataInput, int colorDepth, int width, int height)
     else
     {
         bmpHeader.fileSize = 0;
+        flagIsOpen = false;
     }
     bmpHeader.reserved = 0;
     bmpHeader.pixelDataOffset = 54;
@@ -307,8 +307,8 @@ Bmp::Bmp(uint8_t* pixelDataInput, int colorDepth, int width, int height)
     bmpInfoHeader.impColorCount = 0;
 }
 
-Bmp::Bmp(Img &img)
-: Img(img)
+Bmp::Bmp(const Img &img)
+    : flagIsOpen(true), colorTable(NULL), Img(img)
 {
     // initializing bmpHeader
     bmpHeader.fileType[0] = 'B';
@@ -322,7 +322,7 @@ Bmp::Bmp(Img &img)
     bmpInfoHeader.bmpWidth = getWidth();
     bmpInfoHeader.bmpHeight = getHeight();
     bmpInfoHeader.colorPlaneCount = 1;
-    bmpInfoHeader.colorDepth = 24;
+    bmpInfoHeader.colorDepth = getColorDepth();
     bmpInfoHeader.compressionMethod = 0;
     bmpInfoHeader.imageSize = bmpHeader.fileSize;
     bmpInfoHeader.horizontalResolution = 3780;
@@ -338,6 +338,28 @@ Bmp::~Bmp()
     {
         delete[] colorTable;
     }
+}
+
+bool Bmp::isBmp(const char *path)
+{
+    std::ifstream fin(path, std::ios::binary);
+    char fileType[2];
+    fin.read(fileType, 2);
+    fin.close();
+
+    if (fileType[0] == 'B' && fileType[1] == 'M')
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool Bmp::isOpen()
+{
+    return flagIsOpen;
 }
 
 void Bmp::setDotDensity(int dpi)
