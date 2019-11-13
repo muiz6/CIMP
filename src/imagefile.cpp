@@ -7,7 +7,7 @@
 using namespace cp;
 
 ImageFile::ImageFile(uint8_t* pixelDataInput, int colorDepth, int width, int height)
-    : flagIsOpen(true), Img(pixelData, colorDepth, width, height)
+    : flagIsOpen(true), Img(pixelDataInput, colorDepth, width, height)
 {
     if (colorDepth != 24 && colorDepth != 32)
     {
@@ -20,37 +20,59 @@ ImageFile::ImageFile(const Img &img): flagIsOpen(true), Img(img) {}
 ImageFile::ImageFile(const char *path, ImageReadType type)
     : flagIsOpen(true)
 {
-    if (type == anyImage)
+    if (type == ANY_IMAGE)
     {
         if (Bmp::isBmp(path))
         {
-
+            Bmp bmp(path);
+            if (bmp.isOpen())
+            {
+                colorDepth = bmp.getColorDepth();
+                height = bmp.getHeight();
+                width = bmp.getWidth();
+                pixelData = bmp.getPixelDataInt();
+            }
+            else
+            {
+                flagIsOpen = false;
+            }
         }
-        else if(false) //isPNG?
+        else if (false) //isPNG?
         {
-
+            // read png file
         }
         else
         {
             flagIsOpen = false;
         }
     }
-    else if (type == bmp)
+    else if (type == BITMAP_IMAGE)
     {
         if (Bmp::isBmp(path))
         {
-
+            Bmp bmp(path);
+            if (bmp.isOpen())
+            {
+                colorDepth = bmp.getColorDepth();
+                height = bmp.getHeight();
+                width = bmp.getWidth();
+                pixelData = bmp.getPixelDataInt();
+            }
+            else
+            {
+                flagIsOpen = false;
+            }
         }
         else
         {
             flagIsOpen = false;
         }
     }
-    else if (type == png)
+    else if (type == PNG_IMAGE)
     {
-        if (false)
+        if (false) // isPNG?
         {
-
+            // read png file
         }
         else
         {
@@ -73,20 +95,20 @@ bool ImageFile::isOpen()
     return flagIsOpen;
 }
 
-void ImageFile::writeToFile(const char* path, ImageType type)
+void ImageFile::writeToFile(const char* path, ImageWriteType type)
 {
     ImageFileInterface *img;
-    if (type == bitmap24Bit)
+    if (type == BITMAP_24_BIT)
     {
         img = new Bmp24Bit(*this);
         img->writeToFile(path);
     }
-    else if (type == bitmap32Bit)
+    else if (type == BITMAP_32_BIT)
     {
         img = new Bmp32Bit(*this);
         img->writeToFile(path);
     }
-    else if (type == bitmap8Bit)
+    else if (type == BITMAP_8_BIT)
     {
         img = new Bmp8Bit(*this);
         img->writeToFile(path);
@@ -94,7 +116,7 @@ void ImageFile::writeToFile(const char* path, ImageType type)
     delete img;
 }
 
-void ImageFile::writeToFile(std::string path, ImageType type)
+void ImageFile::writeToFile(std::string path, ImageWriteType type)
 {
     writeToFile(path.c_str(), type);
 }

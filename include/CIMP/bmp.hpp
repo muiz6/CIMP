@@ -61,7 +61,8 @@ namespace cp
             uint32_t impColorCount;
         } bmpInfoHeader;
 
-        uint8_t* colorTable = NULL;
+        uint8_t* colorTable;
+        bool flagIsOpen;
 
     public:
 
@@ -92,6 +93,10 @@ namespace cp
         ~Bmp();
 
         static bool isBmp(const char *path);
+
+        /// @brief check if cp::Bmp was initialized successfully
+        /// @return state of success
+        bool isOpen();
 
         /// @brief set bit depth - default is 96 dpi
         /// @param dpi: desired bit depth of bmp in dots per inch

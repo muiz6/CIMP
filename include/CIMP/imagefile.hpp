@@ -6,22 +6,23 @@
 
 namespace cp
 {
-    enum ImageType
+    enum ImageWriteType
     {
-        bitmap24Bit,
-        bitmap32Bit,
-        bitmap8Bit
+        BITMAP_24_BIT,
+        BITMAP_32_BIT,
+        BITMAP_8_BIT,
+        PNG_24_BIT
     };
 
     enum ImageReadType
     {
-        anyImage,
-        bmp,
-        png
+        ANY_IMAGE,
+        BITMAP_IMAGE,
+        PNG_IMAGE
     };
 
     // abstract class (interface) for writing image files
-    class ImageFile: private Img
+    class ImageFile: public Img
     {
     private:
         bool flagIsOpen;
@@ -47,15 +48,16 @@ namespace cp
 
         virtual ~ImageFile();
 
+        /// @brief check if cp::ImageFile is initialized successfully
         bool isOpen();
 
         /// @brief write image to file
         /// @param path: path to write image to
-        void writeToFile(const char* path, ImageType);
+        void writeToFile(const char* path, ImageWriteType);
 
         /// @brief write image to file
         /// @param path: path to write image to
-        void writeToFile(std::string path, ImageType);
+        void writeToFile(std::string path, ImageWriteType);
     };
 }
 

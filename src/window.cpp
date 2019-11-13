@@ -68,16 +68,17 @@ void Window::newFile(wxCommandEvent &event)
 void Window::openFile(wxCommandEvent &event)
 {
 	wxFileDialog *open = new wxFileDialog(this, "Open");
-	open->SetWildcard("*.bmp");
+	open->SetWindowStyle(wxFD_FILE_MUST_EXIST);
+	open->SetWildcard("All Files|*|Bitmap Files|*.bmp|PNG Files|*.png");
 	if (open->ShowModal() == wxID_OK)
 	{
 		auto path = open->GetPath();
-		Bmp bmp((std::string) path);
+		ImageFile img((std::string) path, ANY_IMAGE);
 
-		buffer = new wxImage(bmp.getWidth(), bmp.getHeight(), bmp.getRGB());
+		buffer = new wxImage(img.getWidth(), img.getHeight(), img.getRGB());
 		canvasWidth = 800;
-		float ratio = (float)canvasWidth / (float)bmp.getWidth();
-		int height = ratio * bmp.getHeight();
+		float ratio = (float)canvasWidth / (float)img.getWidth();
+		int height = ratio * img.getHeight();
 		// buffer->Rescale(canvasWidth, height);
 		wxImage displayImg = *buffer;
 		displayImg.Rescale(canvasWidth, height);
@@ -160,29 +161,24 @@ void Window::saveFile(wxCommandEvent &event)
 	save->SetFilename("untitled");
 	if(save->ShowModal() == wxID_OK)
 	{
-		ImageFile *bmp;
-		wxString name = save->GetPath();
+		ImageFile img(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
+		wxString path = save->GetPath();
 		int choice = save->GetFilterIndex();
 		if (choice == 0)
 		{
-			bmp = new cp::Bmp24Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-			bmp->writeToFile(name, cpBITMAP_24_BIT);
+			img.writeToFile(path, BITMAP_24_BIT);
 		}
 		else if (choice == 1)
 		{
-			bmp = new cp::Bmp32Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-			// bmp->writeToFile(name);
+			img.writeToFile(path, BITMAP_32_BIT);
 		}
 		else if (choice == 2)
 		{
-			bmp = new cp::Bmp8Bit(buffer->GetData(), 24, buffer->GetWidth(), buffer->GetHeight());
-			// bmp->writeToFile(name);
+			img.writeToFile(path, BITMAP_8_BIT);
 		}
 		else if (choice == 3)
 		{
-			bmp = new cp::PNG(256, 256);
-			// bmp->writeToFile(name);
+			img.writeToFile(path, PNG_24_BIT);
 		}
-		delete bmp;
 	}
 }
