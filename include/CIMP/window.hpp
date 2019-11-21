@@ -12,12 +12,14 @@ namespace cp
 	{
 		// menu bar
 		wxMenuBar* menuBar;
-
 		wxMenu* file;
 		wxMenu* filters;
 		wxMenu* imgMenu;
 
+		// tool bar
 		wxToolBar* toolBar;
+		wxToolBarToolBase* toolZoomIn;
+		wxToolBarToolBase* toolZoomOut;
 
 		wxPanel* panel;
 
@@ -27,7 +29,10 @@ namespace cp
 
 	public:
 		Window(const char* title, int width, int height);
+		Window(const Window &) = delete;
 		~Window();
+
+		// event handler methods
 
 		void newFile(wxCommandEvent &event);
 		void onExit(wxCommandEvent &event);
@@ -37,6 +42,8 @@ namespace cp
 		void grayScale(wxCommandEvent &event);
 		void vFlip(wxCommandEvent &event);
 		void saveFile(wxCommandEvent &event);
+		void zoomIn(wxCommandEvent &event);
+		void zoomOut(wxCommandEvent &event);
 
 		DECLARE_EVENT_TABLE()
 	};
