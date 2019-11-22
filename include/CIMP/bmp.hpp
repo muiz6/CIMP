@@ -92,6 +92,7 @@ namespace cp
         /// destructor
         ~Bmp();
 
+        /// @brief check if a file is a bmp file before opening
         static bool isBmp(const char *path);
 
         /// @brief check if cp::Bmp was initialized successfully

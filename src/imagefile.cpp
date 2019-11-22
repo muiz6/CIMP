@@ -4,6 +4,7 @@
 #include "CIMP/bmp24bit.hpp"
 #include "CIMP/bmp32bit.hpp"
 #include "CIMP/bmp8bit.hpp"
+#include "CIMP/bmp16bit.hpp"
 using namespace cp;
 
 ImageFile::ImageFile(uint8_t* pixelDataInput, int colorDepth, int width, int height)
@@ -111,6 +112,11 @@ void ImageFile::writeToFile(const char* path, ImageWriteType type)
     else if (type == BITMAP_8_BIT)
     {
         img = new Bmp8Bit(*this);
+        img->writeToFile(path);
+    }
+    else if (type == BITMAP_16_BIT)
+    {
+        img = new Bmp16Bit(*this);
         img->writeToFile(path);
     }
     delete img;

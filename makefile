@@ -13,6 +13,7 @@ INC_DIR = include
 SRC_DIR = src
 OBJ_DIR = obj
 LIB_DIR = lib/wx
+RSC_DIR = resources
 
 # source files
 SRCS := $(wildcard $(SRC_DIR)/*.cpp)
@@ -23,6 +24,9 @@ OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o, $(SRCS))
 # library files
 LIBS := $(patsubst $(LIB_DIR)/lib%.a,-l %, $(wildcard $(LIB_DIR)/*.a))
 
+# windows resources
+RSC = $(OBJ_DIR)/icon.o
+
 # rules
 .PHONY: all run clean echo
 
@@ -32,9 +36,9 @@ echo:
 	@echo $(LIBS)
 
 # build in debug mode
-$(BIN_DIR)/$(ProjectName): $(OBJS) # $< not working!
+$(BIN_DIR)/$(ProjectName): $(OBJS) $(RSC) # $< not working!
 	@echo bulding project:
-	$(CC) $(CFLAG) $(OBJS) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS) -lz
+	$(CC) $(CFLAG) $(OBJS) $(RSC) -o $@ -I $(INC_DIR) -L $(LIB_DIR) $(LIBS) -mwindows
 	@echo done!
 
 # static rule
@@ -43,6 +47,10 @@ $(OBJS): $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@echo creating object files:
 	$(CC) $(CFLAG) -c $< -I $(INC_DIR) -o $@
 	@echo done!
+
+# compile resource file for windows app
+$(RSC): $(RSC_DIR)/*.rc
+	windres $< -o $@
 
 # runs output file in external console
 # windows only
