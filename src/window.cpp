@@ -171,7 +171,7 @@ void Window::saveFile(wxCommandEvent &event)
 	wxFileDialog *save = new wxFileDialog(this);
 	save->SetWindowStyle(wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	save->SetMessage("Save As");
-	save->SetWildcard("24-bit Bitmap (*.bmp)|*.bmp|32-bit Bitmap (*.bmp)|*.bmp|8-bit Bitmap (*.bmp)|*.bmp|16-bit Bitmap (*.bmp)|*.bmp|PNG (*.png)|*.png");
+	save->SetWildcard("24-bit Bitmap (*.bmp)|*.bmp|32-bit Bitmap (*.bmp)|*.bmp|8-bit Bitmap (*.bmp)|*.bmp|16-bit Bitmap (*.bmp)|*.bmp");
 	save->SetFilename("untitled");
 	if(save->ShowModal() == wxID_OK)
 	{
