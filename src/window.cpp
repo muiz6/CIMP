@@ -19,11 +19,16 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_MENU(11, painty)
 	EVT_MENU(12, red)
 	EVT_MENU(13, green)
+	EVT_MENU(6, saveFile)
+	EVT_TOOL(7, zoomOut)
+	EVT_TOOL(8, zoomIn)
 END_EVENT_TABLE()
 
 Window::Window(const char *title, int width, int height)
-: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
+	: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(width, height))
 {
+	this->SetIcon(wxIcon("data\\icon.png", wxBITMAP_TYPE_PNG));
+
 	// creating menu
 	menuBar = new wxMenuBar;
 
@@ -52,14 +57,19 @@ Window::Window(const char *title, int width, int height)
 	menuBar->Append(imgMenu, "Image");
 	this->SetMenuBar(menuBar);
 
+	// setting up tool bar
+	toolBar = this->CreateToolBar(wxTB_HORIZONTAL | wxTB_FLAT, wxID_ANY);
+	toolBar->SetBackgroundColour(wxColour(40, 40, 40));
+	toolZoomIn = toolBar->AddTool(8, "zoom-in", wxBitmap("data\\zoom-in.png", wxBITMAP_TYPE_PNG));
+	toolZoomOut = toolBar->AddTool(7, "zoom-out", wxBitmap("data\\zoom-out.png", wxBITMAP_TYPE_PNG));
+	toolBar->Realize();
+
 	panel = new wxPanel(this, wxID_ANY);
 	panel->SetBackgroundColour(wxColour(55, 55, 55));
 
-	// creating tool bar
-	// toolBar = new wxToolBar(panel, wxID_ANY);
-	// toolBar->SetWindowStyleFlag(wxstretc);
-	// toolBar->AddTool(wxID_ANY, "zoom In", wxBitmap("Data\\zoom-in.png", wxBITMAP_TYPE_PNG));
-	// toolBar->AddTool(wxID_ANY, "zoom In", wxBitmap("Data\\zoom-out.png", wxBITMAP_TYPE_PNG));
+	// initialize blank canvas
+	int imgHeight = 600;
+	canvas = new wxStaticBitmap(panel, wxID_ANY, wxNullBitmap, wxPoint(10, 10), wxSize(canvasWidth, imgHeight));
 
 	this->Centre();
 }
@@ -69,15 +79,22 @@ Window::~Window() {}
 void Window::newFile(wxCommandEvent &event)
 {
 	Bmp bmp(800, 600);
-	wxImage img(800, 600, bmp.getPixelDataInt());
-	canvas = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(img), wxPoint(10, 10), wxSize(800, 600));
+	buffer = new wxImage(bmp.getWidth(), bmp.getHeight(), bmp.getRGB());
+
+	wxImage img = *buffer;
+	canvasWidth = 800;
+	float ratio = (float)canvasWidth / (float)bmp.getWidth();
+	int height = ratio * bmp.getHeight();
+	img.Rescale(canvasWidth, height);
+
+	canvas->SetBitmap(img);
 }
 
 void Window::openFile(wxCommandEvent &event)
 {
 	wxFileDialog *open = new wxFileDialog(this, "Open");
 	open->SetWindowStyle(wxFD_FILE_MUST_EXIST);
-	open->SetWildcard("All Files|*|Bitmap Files|*.bmp|PNG Files|*.png");
+	open->SetWildcard("Bitmap Files|*.bmp");
 	if (open->ShowModal() == wxID_OK)
 	{
 		auto path = open->GetPath();
@@ -87,11 +104,11 @@ void Window::openFile(wxCommandEvent &event)
 		canvasWidth = 800;
 		float ratio = (float)canvasWidth / (float)img.getWidth();
 		int height = ratio * img.getHeight();
-		// buffer->Rescale(canvasWidth, height);
 		wxImage displayImg = *buffer;
 		displayImg.Rescale(canvasWidth, height);
 
-		canvas = new wxStaticBitmap(panel, wxID_ANY, wxBitmap(displayImg), wxPoint(10, 10), wxSize(canvasWidth, height));
+		panel->ClearBackground();
+		canvas->SetBitmap(wxBitmap(displayImg));
 	}
 }
 
@@ -226,7 +243,7 @@ void Window::saveFile(wxCommandEvent &event)
 	wxFileDialog *save = new wxFileDialog(this);
 	save->SetWindowStyle(wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	save->SetMessage("Save As");
-	save->SetWildcard("24-bit Bitmap (*.bmp)|*.bmp|32-bit Bitmap (*.bmp)|*.bmp|8-bit Bitmap (*.bmp)|*.bmp|PNG (*.png)|*.png");
+	save->SetWildcard("24-bit Bitmap (*.bmp)|*.bmp|32-bit Bitmap (*.bmp)|*.bmp|8-bit Bitmap (*.bmp)|*.bmp|16-bit Bitmap (*.bmp)|*.bmp");
 	save->SetFilename("untitled");
 	if(save->ShowModal() == wxID_OK)
 	{
@@ -247,6 +264,10 @@ void Window::saveFile(wxCommandEvent &event)
 		}
 		else if (choice == 3)
 		{
+			img.writeToFile(path, BITMAP_16_BIT);
+		}
+		else if (choice == 4)
+		{
 			img.writeToFile(path, PNG_24_BIT);
 		}
 	}
@@ -265,4 +286,34 @@ void Window::red(wxCommandEvent &event)
 
 	wxBitmap rslt(displayImg, 24);
 	canvas->SetBitmap(rslt);
+void Window::zoomIn(wxCommandEvent &event)
+{
+	if (canvasWidth < 1600)
+	{
+		canvasWidth += 50;
+
+		wxImage displayImg = *buffer;
+		int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+		displayImg.Rescale(canvasWidth, height);
+
+		wxBitmap rslt(displayImg, 24);
+		canvas->SetBitmap(rslt);
+	}
+}
+
+void Window::zoomOut(wxCommandEvent &event)
+{
+	if (canvasWidth > 300)
+	{
+		canvasWidth -= 50;
+
+		wxImage displayImg = *buffer;
+		int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+		displayImg.Rescale(canvasWidth, height);
+
+		wxBitmap rslt(displayImg, 24);
+		// panel->ClearBackground();
+		canvas->SetBitmap(rslt);
+		panel->ClearBackground();
+	}
 }

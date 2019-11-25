@@ -47,10 +47,8 @@
         "typeinfo": "cpp"
     },
     "VSCodeCounter.exclude": [
-        "**/.vscode/**",
         "**/node_modules/**",
-        "**/include/wx/**",
-        "**/include/mswud/**",
-        "**/lib/**"
-    ]
+        // "**/lib/**"
+    ],
+    "VSCodeCounter.showInStatusBar": false
 }

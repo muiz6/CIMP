@@ -11,6 +11,7 @@ namespace cp
         BITMAP_24_BIT,
         BITMAP_32_BIT,
         BITMAP_8_BIT,
+        BITMAP_16_BIT,
         PNG_24_BIT
     };
 
