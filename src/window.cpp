@@ -1,7 +1,6 @@
 #include "CIMP/window.hpp"
 #include "CIMP/cimp.hpp"
 #include <string.h>
-#include <iostream>
 #include <wx/filedlg.h>
 using namespace cp;
 
