@@ -42,6 +42,12 @@ namespace cp
 		void grayScale(wxCommandEvent &event);
 		void vFlip(wxCommandEvent &event);
 		void saveFile(wxCommandEvent &event);
+		void red(wxCommandEvent &event);
+		void green(wxCommandEvent &event);
+		void blue(wxCommandEvent &event);
+		void silly(wxCommandEvent &event);
+		void sepia(wxCommandEvent &event);
+		
 		void zoomIn(wxCommandEvent &event);
 		void zoomOut(wxCommandEvent &event);
 
