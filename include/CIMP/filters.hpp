@@ -79,7 +79,7 @@ namespace cp
         /// @brief  painty function is the oily paint filetr
         /// @param silly: In RGB  give Hard coded Values  
         /// These values are store in new Array called FiletrPixel 
-        void painty();
+        void sepia();
     };
 }
 

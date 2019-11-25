@@ -204,12 +204,13 @@ void Filters:: silly()
 
 }
 //painty filter (similer to the oil paint filter)
-void Filters:: painty()
+void Filters:: sepia()
 {
     uint32_t size = width * height * 3;
     uint8_t* filteredPixels = new uint8_t[size];
-    //Applying  filter
-     for(int i = 0; i < size; i += 3)
+    silly();
+    //sepia image formula
+    for(int i = 0; i < size; i += 3)
     {
         filteredPixels[i] = (0.393*pixelData[i] + 0.769*pixelData[i+1] + 0.189*pixelData[i+2]);
         filteredPixels[i+1] = (0.349*pixelData[i] + 0.686*pixelData[i+1] + 0.168*pixelData[i+2]);

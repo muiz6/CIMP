@@ -14,14 +14,13 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_MENU(4, alienate)
 	EVT_MENU(5, vFlip)
 	EVT_MENU(6, saveFile)	
-	EVT_MENU(9, blue)
-	EVT_MENU(10, silly)
-	EVT_MENU(11, painty)
-	EVT_MENU(12, red)
-	EVT_MENU(13, green)
-	EVT_MENU(6, saveFile)
 	EVT_TOOL(7, zoomOut)
 	EVT_TOOL(8, zoomIn)
+	EVT_MENU(9, blue)
+	EVT_MENU(10, silly)
+	EVT_MENU(11, sepia)
+	EVT_MENU(12, red)
+	EVT_MENU(13, green)
 END_EVENT_TABLE()
 
 Window::Window(const char *title, int width, int height)
@@ -48,8 +47,7 @@ Window::Window(const char *title, int width, int height)
 	filters->Append(13 , "Green");
 	filters->Append(9, "Blue");
 	filters->Append(10, "silly");
-	filters->Append(11, "painty");
-
+	filters->Append(11, "sepia");
 	imgMenu->Append(5, "Flip Vertically");
 
 	menuBar->Append(file, "File");
@@ -207,11 +205,11 @@ void Window::silly(wxCommandEvent &event)
 	canvas->SetBitmap(rslt);
 }
 
-void Window::painty(wxCommandEvent &event)
+void Window::sepia(wxCommandEvent &event)
 {
 	unsigned char* pix = buffer->GetData();
 	Filters fltr(pix, 24, buffer->GetWidth(), buffer->GetHeight());
-	fltr.painty();
+	fltr.sepia();
 
 	buffer->SetData(fltr.getPixelDataInt());
 	wxImage displayImg = *buffer;
@@ -286,6 +284,8 @@ void Window::red(wxCommandEvent &event)
 
 	wxBitmap rslt(displayImg, 24);
 	canvas->SetBitmap(rslt);
+}
+
 void Window::zoomIn(wxCommandEvent &event)
 {
 	if (canvasWidth < 1600)

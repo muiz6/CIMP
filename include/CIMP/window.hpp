@@ -46,7 +46,7 @@ namespace cp
 		void green(wxCommandEvent &event);
 		void blue(wxCommandEvent &event);
 		void silly(wxCommandEvent &event);
-		void painty(wxCommandEvent &event);
+		void sepia(wxCommandEvent &event);
 		
 		void zoomIn(wxCommandEvent &event);
 		void zoomOut(wxCommandEvent &event);

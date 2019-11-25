@@ -96,6 +96,8 @@ bool ImageFile::isOpen()
     return flagIsOpen;
 }
 
+//polymorphism concept
+
 void ImageFile::writeToFile(const char* path, ImageWriteType type)
 {
     ImageFileInterface *img;
