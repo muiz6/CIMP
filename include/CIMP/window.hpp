@@ -37,7 +37,12 @@ namespace cp
 		void grayScale(wxCommandEvent &event);
 		void vFlip(wxCommandEvent &event);
 		void saveFile(wxCommandEvent &event);
-
+		void red(wxCommandEvent &event);
+		void green(wxCommandEvent &event);
+		void blue(wxCommandEvent &event);
+		void silly(wxCommandEvent &event);
+		void painty(wxCommandEvent &event);
+		
 		DECLARE_EVENT_TABLE()
 	};
 }

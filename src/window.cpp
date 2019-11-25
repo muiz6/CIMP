@@ -1,6 +1,5 @@
 #include "CIMP/window.hpp"
 #include "CIMP/cimp.hpp"
-#include "CIMP/png.hpp"
 #include <string.h>
 #include <iostream>
 #include <wx/filedlg.h>
@@ -15,7 +14,12 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_MENU(3, grayScale)
 	EVT_MENU(4, alienate)
 	EVT_MENU(5, vFlip)
-	EVT_MENU(6, saveFile)
+	EVT_MENU(6, saveFile)	
+	EVT_MENU(9, blue)
+	EVT_MENU(10, silly)
+	EVT_MENU(11, painty)
+	EVT_MENU(12, red)
+	EVT_MENU(13, green)
 END_EVENT_TABLE()
 
 Window::Window(const char *title, int width, int height)
@@ -36,6 +40,11 @@ Window::Window(const char *title, int width, int height)
 	filters->Append(3, "Gray Scale");
 	filters->Append(2, "Invert Colors");
 	filters->Append(4, "Alienate");
+	filters->Append(12, "Red");
+	filters->Append(13 , "Green");
+	filters->Append(9, "Blue");
+	filters->Append(10, "silly");
+	filters->Append(11, "painty");
 
 	imgMenu->Append(5, "Flip Vertically");
 
@@ -137,6 +146,67 @@ void Window::grayScale(wxCommandEvent &event)
 	canvas->SetBitmap(rslt);
 }
 
+void Window::green(wxCommandEvent &event)
+{
+	unsigned char* pix = buffer->GetData();
+	Filters fltr(pix, 24, buffer->GetWidth(), buffer->GetHeight());
+	fltr.green();
+
+	buffer->SetData(fltr.getPixelDataInt());
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
+	canvas->SetBitmap(rslt);
+}
+
+void Window::blue(wxCommandEvent &event)
+{
+	unsigned char* pix = buffer->GetData();
+	Filters fltr(pix, 24, buffer->GetWidth(), buffer->GetHeight());
+	fltr.blue();
+
+	buffer->SetData(fltr.getPixelDataInt());
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
+	canvas->SetBitmap(rslt);
+}
+
+void Window::silly(wxCommandEvent &event)
+{
+	unsigned char* pix = buffer->GetData();
+	Filters fltr(pix, 24, buffer->GetWidth(), buffer->GetHeight());
+	fltr.silly();
+
+	buffer->SetData(fltr.getPixelDataInt());
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
+	canvas->SetBitmap(rslt);
+}
+
+void Window::painty(wxCommandEvent &event)
+{
+	unsigned char* pix = buffer->GetData();
+	Filters fltr(pix, 24, buffer->GetWidth(), buffer->GetHeight());
+	fltr.painty();
+
+	buffer->SetData(fltr.getPixelDataInt());
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
+	canvas->SetBitmap(rslt);
+}
+
+
 void Window::vFlip(wxCommandEvent &event)
 {
 	unsigned char* pix = buffer->GetData();
@@ -181,4 +251,19 @@ void Window::saveFile(wxCommandEvent &event)
 			img.writeToFile(path, PNG_24_BIT);
 		}
 	}
+}
+
+void Window::red(wxCommandEvent &event)
+{
+	unsigned char* pix = buffer->GetData();
+	Filters fltr(pix, 24, buffer->GetWidth(), buffer->GetHeight());
+	fltr.red();
+
+	buffer->SetData(fltr.getPixelDataInt());
+	wxImage displayImg = *buffer;
+	int height = (float)canvasWidth / (float)buffer->GetWidth() * buffer->GetHeight();
+	displayImg.Rescale(canvasWidth, height);
+
+	wxBitmap rslt(displayImg, 24);
+	canvas->SetBitmap(rslt);
 }
