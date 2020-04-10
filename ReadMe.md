@@ -1,3 +1,5 @@
+> My Semester Project for OOP
+
 # CIMP
 ## Introduction
 CIMP is an image manipulation program that can apply filters to an image.
