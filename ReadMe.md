@@ -3,6 +3,7 @@
 # CIMP
 ## Introduction
 CIMP is an image manipulation program that can apply filters to an image.
+![](media/icon.png)
 
 ### Dependencies
 CIMP depends upon [wxWidgets](https://github.com/wxWidgets/wxWidgets). Library for its
