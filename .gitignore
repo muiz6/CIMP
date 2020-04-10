@@ -6,6 +6,7 @@
 sample/
 build/
 lib/
+include/wx/
 
 # files
 *.exe
