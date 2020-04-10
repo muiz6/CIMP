@@ -1,12 +1,14 @@
-#ignore following files/folders
-
-#directories
+# vscode files
 .VSCodeCounter
-sample
+.vscode
 
-#files
-build/*.exe
+# directories
+sample/
+build/
+lib/
+include/wx/
+
+# files
 *.exe
-obj/*.o
 src/png.cpp
 include/CIMP/png.hpp
