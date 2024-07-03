@@ -5,6 +5,10 @@ than the GUI which uses with WxWidgets library for graphical components).
 
 ![logo](/docs/icon.png)
 
+### Download
+
+If you're a 64-bit Windows 10 user you can download a pre-compiled binary from [here](https://github.com/muiz6/CIMP/releases/download/windows_10_x64/CIMP.win10.x64.zip).
+
 ### Features
 
 - Open sevaral bitmap image formats
